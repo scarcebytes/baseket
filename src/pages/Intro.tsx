@@ -5,7 +5,6 @@ import Divider from '@mui/material/Divider'
 import styled from '@emotion/styled'
 import { Theme } from '@mui/material'
 
-import safeLogo from 'src/assets/safe-logo.svg'
 import ChainSelector from 'src/components/chain-selector/ChainSelector'
 
 type IntroProps = {
