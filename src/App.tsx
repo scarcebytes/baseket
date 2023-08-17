@@ -5,6 +5,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import '@safe-global/safe-react-components/dist/fonts.css'
 import { useCallback, useState } from 'react'
+import { Amplify } from "aws-amplify";
 
 import Header from 'src/components/header/Header'
 import Providers from 'src/components/providers/Providers'
@@ -14,6 +15,15 @@ import OnRampKitDemo from 'src/pages/OnRampKitDemo'
 import RelayerKitDemo from 'src/pages/RelayerKitDemo'
 import NavMenu from './components/nav-menu/NavMenu'
 import SafeCoreInfo from './components/safe-core-info/SafeCoreInfo'
+import {
+  AmplifyProvider,
+  Authenticator
+} from "@aws-amplify/ui-react";
+import aws_exports from "./aws-exports";
+
+import "@aws-amplify/ui-react/styles.css";
+
+Amplify.configure(aws_exports);
 
 function App() {
   const [activeStep, setActiveStep] = useState(0)
@@ -39,7 +49,10 @@ function App() {
   const nextLabel = steps[activeStep].nextLabel
 
   return (
-    <Providers>
+    <AmplifyProvider>
+      <Authenticator>
+        {({ signOut, user }) => (
+      <Providers>
       <>
         <CssBaseline />
 
@@ -95,7 +108,10 @@ function App() {
           </main>
         </Box>
       </>
-    </Providers>
+      </Providers>
+      )}
+      </Authenticator>
+    </AmplifyProvider>
   )
 }
 
