@@ -21,15 +21,13 @@ const Intro = ({ setStep }: IntroProps) => {
       paddingTop="72px"
       paddingLeft="100px"
     >
-      <img src={safeLogo} alt="safe logo" height="30px" />
 
       <Typography variant="h1" fontSize="64px" lineHeight="76px">
-        Account Abstraction SDK
+        Baseket
       </Typography>
 
       <Typography variant="body1">
-        Add account abstraction functionality into your apps. Here you can find examples on how to
-        use our different kits:
+      An onchain basket of monetary memories and goals as piggy-banks, allowances, gifts or inheritance
       </Typography>
 
       {/* Kit list */}
