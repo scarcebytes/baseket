@@ -17,6 +17,9 @@
           "appId": "d20swj6m75h0lr",
           "type": "cicd"
         }
+      },
+      "auth": {
+        "baseket1cb8ed19": {}
       }
     }
   },
@@ -80,6 +83,9 @@
           "appId": "d20swj6m75h0lr",
           "type": "cicd"
         }
+      },
+      "auth": {
+        "baseket1c75f61d": {}
       }
     }
   },
