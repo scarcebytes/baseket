@@ -6,7 +6,18 @@ import { useAccountAbstraction } from 'src/store/accountAbstractionContext'
 import { SwapWidget } from '@uniswap/widgets'
 import {Theme as UniswapTheme} from '@uniswap/widgets'
 
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineDot from '@mui/lab/TimelineDot';
+import { init, useQuery } from "@airstack/airstack-react";
+import { Asset } from "@airstack/airstack-react";
+
 import '@uniswap/widgets/fonts.css'
+
+init("c6889b6b670e4cfbba45f1e3cc04476d");
 
 const UniswapDemo = () => {
   const {
@@ -38,6 +49,33 @@ const UniswapDemo = () => {
       <div className="Uniswap">
         <SwapWidget width="100%" brandedFooter={false} theme={theme} provider={web3Provider} />
      </div>
+
+     <Timeline position="alternate">
+      <TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot color="secondary" />
+          <TimelineConnector />
+        </TimelineSeparator>
+        <TimelineContent>Secondary</TimelineContent>
+      </TimelineItem>
+      <TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot color="success" />
+        </TimelineSeparator>
+        <TimelineContent>Success</TimelineContent>
+      </TimelineItem>
+    </Timeline>
+
+    <Asset
+        chain="ethereum"
+        address="0x1c9324a7765256d46158185108f37260aa711266"
+        tokenId="1"
+        loading={<div>Loading...</div>}
+        error={<div>Error loading asset.</div>}
+        imgProps={{alt: "my asset"}}
+        preset="medium"
+      />
+
     </>
   )
 }
