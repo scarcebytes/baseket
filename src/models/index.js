@@ -4,8 +4,13 @@ import { schema } from './schema';
 
 
 
-const { Baseket } = initSchema(schema);
+const { Human, User, Post, Baseket, BaseketHuman, BaseketPost } = initSchema(schema);
 
 export {
-  Baseket
+  Human,
+  User,
+  Post,
+  Baseket,
+  BaseketHuman,
+  BaseketPost
 };
