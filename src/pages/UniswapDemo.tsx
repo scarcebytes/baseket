@@ -19,17 +19,26 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import { init, useQuery } from "@airstack/airstack-react";
 import { Asset } from "@airstack/airstack-react";
 import TokenCard from "../components/Token";
-import Contact from "../components/Contact";
-import Image from "material-ui-image";
 
+
+import ReactFlow from 'reactflow';
+
+import 'reactflow/dist/style.css';
 
 import '@uniswap/widgets/fonts.css'
 
 init("c6889b6b670e4cfbba45f1e3cc04476d");
 
+const initialNodes = [
+  { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
+  { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
+];
+const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
+
+
 const DisplayNFTs = () => {
   const query = `query GetAllNFTsOwnedByUser {
-    TokenBalances(input: {filter: {owner: {_in: ["5256.eth"]}, tokenType: {_in: [ERC1155, ERC721]}}, blockchain: ethereum, limit: 10}) {
+    TokenBalances(input: {filter: {owner: {_in: ["5256.eth"]}, tokenType: {_in: [ERC1155, ERC721]}}, blockchain: ethereum, limit: 2}) {
       TokenBalance {
         owner {
           addresses
@@ -76,11 +85,16 @@ const DisplayNFTs = () => {
                       <div className="flex flex-col gap-2">
                         <div className="relative aspect-[5/6] w-full overflow-hidden rounded-md">
                           <Typography>{nft.tokenNfts.address}</Typography>
-                          <Image
-                            src={nft.tokenNfts.contentValue.image.original}
+                            <Box
+                            component="img"
+                            sx={{
+                              height: 233,
+                              width: 350,
+                              maxHeight: { xs: 233, md: 167 },
+                              maxWidth: { xs: 350, md: 250 },
+                            }}
                             alt={nft.tokenNfts.address}
-                            fill
-                            className="h-full w-full object-cover"
+                            src={nft.tokenNfts.contentValue.image.original}
                           />
                         </div>
                         <span className="font-bold">
@@ -158,6 +172,13 @@ const UniswapDemo = () => {
 
     <DisplayNFTs />
 
+      <div className="flex items-center justify-center gap-8">
+        <TokenCard amount={12} token={"ABC"} />
+      </div>
+
+      <div style={{ width: '100vw', height: '30vh' }}>
+      <ReactFlow nodes={initialNodes} edges={initialEdges} />
+    </div>
     </>
   )
 }
