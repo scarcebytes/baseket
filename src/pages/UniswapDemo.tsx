@@ -30,7 +30,7 @@ const UniswapDemo = () => {
     web3Provider
   } = useAccountAbstraction()
  
-  const query = `query GetAllNFTsOwnedByUser {
+  const queryOld = `query GetAllNFTsOwnedByUser {
     TokenBalances(input: {filter: {owner: {_in: ["5256.eth"]}, tokenType: {_in: [ERC1155, ERC721]}}, blockchain: ethereum, limit: 10}) {
       TokenBalance {
         owner {
@@ -54,12 +54,57 @@ const UniswapDemo = () => {
   }
   `;
 
+  const query = `query MyQuery {
+    Accounts(
+      input: {blockchain: ethereum, filter: {address: {_eq: "0x718a9d173e66c411f48e41d3da2fa6f0ce8f5d3c"}}}
+    ) {
+      Account {
+        nft {
+          address
+          tokenId
+          contentValue {
+            image {
+              medium
+            }
+          }
+          tokenBalances {
+            owner {
+              addresses
+            }
+          }
+        }
+        address {
+          addresses
+          tokenBalances {
+            amount
+            tokenAddress
+            tokenId
+            tokenNfts {
+              contentValue {
+                image {
+                  original
+                  medium
+                }
+              }
+              erc6551Accounts {
+                address {
+                  addresses
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  `;
+
   const [userNFTs, setUserNFTs] = useState();
   const { data, loading } = useQuery(query);
 
   useEffect(() => {
     if (data) {
-      setUserNFTs(data.TokenBalances.TokenBalance);
+      //setUserNFTs(data.TokenBalances.TokenBalance);
       console.log(data)
     }
   }, [data, userNFTs]);
