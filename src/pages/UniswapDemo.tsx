@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography'
 import { useAccountAbstraction } from 'src/store/accountAbstractionContext'
 import { SwapWidget } from '@uniswap/widgets'
 import {Theme as UniswapTheme} from '@uniswap/widgets'
+import { useEffect, useState } from "react";
 
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
@@ -28,7 +29,42 @@ const UniswapDemo = () => {
     loginWeb3Auth,
     web3Provider
   } = useAccountAbstraction()
-  
+ 
+  const query = `query GetAllNFTsOwnedByUser {
+    TokenBalances(input: {filter: {owner: {_in: ["5256.eth"]}, tokenType: {_in: [ERC1155, ERC721]}}, blockchain: ethereum, limit: 10}) {
+      TokenBalance {
+        owner {
+          addresses
+        }
+        tokenNfts {
+          address
+          tokenId
+          blockchain
+          contentValue {
+            image {
+              original
+            }
+          }
+          metaData {
+            name
+          }
+        }
+      }
+    }
+  }
+  `;
+
+  const [userNFTs, setUserNFTs] = useState();
+  const { data, loading } = useQuery(query);
+
+  useEffect(() => {
+    if (data) {
+      setUserNFTs(data.TokenBalances.TokenBalance);
+      console.log(data)
+    }
+  }, [data, userNFTs]);
+
+
   const theme: UniswapTheme = {
     primary: '#FFF',
     secondary: '#A9A9A9',
