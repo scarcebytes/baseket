@@ -210,7 +210,7 @@ const AccountAbstractionProvider = ({ children }: { children: JSX.Element }) => 
       setIsRelayerLoading(true)
 
       const signer = web3Provider.getSigner()
-      const relayPack = new GelatoRelayPack()
+      const relayPack = new GelatoRelayPack("vy2I0w5xdJtbhVh26o_tR3gK2RujTIQ9DVPOTKNCEbQ_")
       const safeAccountAbstraction = new AccountAbstraction(signer)
 
       await safeAccountAbstraction.init({ relayPack })
@@ -220,13 +220,13 @@ const AccountAbstractionProvider = ({ children }: { children: JSX.Element }) => 
         {
           to: safeSelected,
           data: '0x',
-          value: utils.parseUnits('0.01', 'ether').toString(),
+          value: utils.parseUnits('0.00', 'ether').toString(),
           operation: 0 // OperationType.Call,
         }
       ]
 
       const options: MetaTransactionOptions = {
-        isSponsored: false,
+        isSponsored: true,
         gasLimit: '600000', // in this alfa version we need to manually set the gas limit
         gasToken: ethers.constants.AddressZero // native token
       }
