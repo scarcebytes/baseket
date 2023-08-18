@@ -1,0 +1,5 @@
+{
+  "AppSyncApiName": "baseket",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false
+}
