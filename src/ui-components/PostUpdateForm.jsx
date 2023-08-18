@@ -24,13 +24,7 @@ import {
   getOverrideProps,
   useDataStoreBinding,
 } from "@aws-amplify/ui-react/internal";
-import {
-  Baseket,
-  Post,
-  Human as Human0,
-  BaseketPost,
-  BaseketHuman,
-} from "../models";
+import { Post, Baseket, BaseketPost } from "../models";
 import { fetchByPath, validateField } from "./utils";
 import { DataStore } from "aws-amplify";
 function ArrayField({
@@ -191,10 +185,10 @@ function ArrayField({
     </React.Fragment>
   );
 }
-export default function BaseketUpdateForm(props) {
+export default function PostUpdateForm(props) {
   const {
     id: idProp,
-    baseket: baseketModelProp,
+    post: postModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -204,15 +198,14 @@ export default function BaseketUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    type: "",
+    image: "",
     description: "",
     tokenAddress: "",
     tokenId: "",
-    rootBaseket: false,
-    posts: [],
-    Human: [],
+    rootToken: false,
+    basekets: [],
   };
-  const [type, setType] = React.useState(initialValues.type);
+  const [image, setImage] = React.useState(initialValues.image);
   const [description, setDescription] = React.useState(
     initialValues.description
   );
@@ -220,111 +213,73 @@ export default function BaseketUpdateForm(props) {
     initialValues.tokenAddress
   );
   const [tokenId, setTokenId] = React.useState(initialValues.tokenId);
-  const [rootBaseket, setRootBaseket] = React.useState(
-    initialValues.rootBaseket
-  );
-  const [posts, setPosts] = React.useState(initialValues.posts);
-  const [Human, setHuman] = React.useState(initialValues.Human);
+  const [rootToken, setRootToken] = React.useState(initialValues.rootToken);
+  const [basekets, setBasekets] = React.useState(initialValues.basekets);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = baseketRecord
-      ? {
-          ...initialValues,
-          ...baseketRecord,
-          posts: linkedPosts,
-          Human: linkedHuman,
-        }
+    const cleanValues = postRecord
+      ? { ...initialValues, ...postRecord, basekets: linkedBasekets }
       : initialValues;
-    setType(cleanValues.type);
+    setImage(cleanValues.image);
     setDescription(cleanValues.description);
     setTokenAddress(cleanValues.tokenAddress);
     setTokenId(cleanValues.tokenId);
-    setRootBaseket(cleanValues.rootBaseket);
-    setPosts(cleanValues.posts ?? []);
-    setCurrentPostsValue(undefined);
-    setCurrentPostsDisplayValue("");
-    setHuman(cleanValues.Human ?? []);
-    setCurrentHumanValue(undefined);
-    setCurrentHumanDisplayValue("");
+    setRootToken(cleanValues.rootToken);
+    setBasekets(cleanValues.basekets ?? []);
+    setCurrentBaseketsValue(undefined);
+    setCurrentBaseketsDisplayValue("");
     setErrors({});
   };
-  const [baseketRecord, setBaseketRecord] = React.useState(baseketModelProp);
-  const [linkedPosts, setLinkedPosts] = React.useState([]);
-  const canUnlinkPosts = false;
-  const [linkedHuman, setLinkedHuman] = React.useState([]);
-  const canUnlinkHuman = false;
+  const [postRecord, setPostRecord] = React.useState(postModelProp);
+  const [linkedBasekets, setLinkedBasekets] = React.useState([]);
+  const canUnlinkBasekets = false;
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
-        ? await DataStore.query(Baseket, idProp)
-        : baseketModelProp;
-      setBaseketRecord(record);
-      const linkedPosts = record
+        ? await DataStore.query(Post, idProp)
+        : postModelProp;
+      setPostRecord(record);
+      const linkedBasekets = record
         ? await Promise.all(
             (
-              await record.posts.toArray()
+              await record.basekets.toArray()
             ).map((r) => {
-              return r.post;
+              return r.baseket;
             })
           )
         : [];
-      setLinkedPosts(linkedPosts);
-      const linkedHuman = record
-        ? await Promise.all(
-            (
-              await record.Human.toArray()
-            ).map((r) => {
-              return r.human;
-            })
-          )
-        : [];
-      setLinkedHuman(linkedHuman);
+      setLinkedBasekets(linkedBasekets);
     };
     queryData();
-  }, [idProp, baseketModelProp]);
-  React.useEffect(resetStateValues, [baseketRecord, linkedPosts, linkedHuman]);
-  const [currentPostsDisplayValue, setCurrentPostsDisplayValue] =
+  }, [idProp, postModelProp]);
+  React.useEffect(resetStateValues, [postRecord, linkedBasekets]);
+  const [currentBaseketsDisplayValue, setCurrentBaseketsDisplayValue] =
     React.useState("");
-  const [currentPostsValue, setCurrentPostsValue] = React.useState(undefined);
-  const postsRef = React.createRef();
-  const [currentHumanDisplayValue, setCurrentHumanDisplayValue] =
-    React.useState("");
-  const [currentHumanValue, setCurrentHumanValue] = React.useState(undefined);
-  const HumanRef = React.createRef();
+  const [currentBaseketsValue, setCurrentBaseketsValue] =
+    React.useState(undefined);
+  const baseketsRef = React.createRef();
   const getIDValue = {
-    posts: (r) => JSON.stringify({ id: r?.id }),
-    Human: (r) => JSON.stringify({ id: r?.id }),
+    basekets: (r) => JSON.stringify({ id: r?.id }),
   };
-  const postsIdSet = new Set(
-    Array.isArray(posts)
-      ? posts.map((r) => getIDValue.posts?.(r))
-      : getIDValue.posts?.(posts)
+  const baseketsIdSet = new Set(
+    Array.isArray(basekets)
+      ? basekets.map((r) => getIDValue.basekets?.(r))
+      : getIDValue.basekets?.(basekets)
   );
-  const HumanIdSet = new Set(
-    Array.isArray(Human)
-      ? Human.map((r) => getIDValue.Human?.(r))
-      : getIDValue.Human?.(Human)
-  );
-  const postRecords = useDataStoreBinding({
+  const baseketRecords = useDataStoreBinding({
     type: "collection",
-    model: Post,
-  }).items;
-  const humanRecords = useDataStoreBinding({
-    type: "collection",
-    model: Human0,
+    model: Baseket,
   }).items;
   const getDisplayValue = {
-    posts: (r) => `${r?.image ? r?.image + " - " : ""}${r?.id}`,
-    Human: (r) => `${r?.firstName ? r?.firstName + " - " : ""}${r?.id}`,
+    basekets: (r) => `${r?.type ? r?.type + " - " : ""}${r?.id}`,
   };
   const validations = {
-    type: [],
+    image: [{ type: "URL" }],
     description: [],
     tokenAddress: [],
     tokenId: [],
-    rootBaseket: [],
-    posts: [],
-    Human: [],
+    rootToken: [],
+    basekets: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -352,13 +307,12 @@ export default function BaseketUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          type,
+          image,
           description,
           tokenAddress,
           tokenId,
-          rootBaseket,
-          posts,
-          Human,
+          rootToken,
+          basekets,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -397,49 +351,49 @@ export default function BaseketUpdateForm(props) {
             }
           });
           const promises = [];
-          const postsToLinkMap = new Map();
-          const postsToUnLinkMap = new Map();
-          const postsMap = new Map();
-          const linkedPostsMap = new Map();
-          posts.forEach((r) => {
-            const count = postsMap.get(getIDValue.posts?.(r));
+          const baseketsToLinkMap = new Map();
+          const baseketsToUnLinkMap = new Map();
+          const baseketsMap = new Map();
+          const linkedBaseketsMap = new Map();
+          basekets.forEach((r) => {
+            const count = baseketsMap.get(getIDValue.basekets?.(r));
             const newCount = count ? count + 1 : 1;
-            postsMap.set(getIDValue.posts?.(r), newCount);
+            baseketsMap.set(getIDValue.basekets?.(r), newCount);
           });
-          linkedPosts.forEach((r) => {
-            const count = linkedPostsMap.get(getIDValue.posts?.(r));
+          linkedBasekets.forEach((r) => {
+            const count = linkedBaseketsMap.get(getIDValue.basekets?.(r));
             const newCount = count ? count + 1 : 1;
-            linkedPostsMap.set(getIDValue.posts?.(r), newCount);
+            linkedBaseketsMap.set(getIDValue.basekets?.(r), newCount);
           });
-          linkedPostsMap.forEach((count, id) => {
-            const newCount = postsMap.get(id);
+          linkedBaseketsMap.forEach((count, id) => {
+            const newCount = baseketsMap.get(id);
             if (newCount) {
               const diffCount = count - newCount;
               if (diffCount > 0) {
-                postsToUnLinkMap.set(id, diffCount);
+                baseketsToUnLinkMap.set(id, diffCount);
               }
             } else {
-              postsToUnLinkMap.set(id, count);
+              baseketsToUnLinkMap.set(id, count);
             }
           });
-          postsMap.forEach((count, id) => {
-            const originalCount = linkedPostsMap.get(id);
+          baseketsMap.forEach((count, id) => {
+            const originalCount = linkedBaseketsMap.get(id);
             if (originalCount) {
               const diffCount = count - originalCount;
               if (diffCount > 0) {
-                postsToLinkMap.set(id, diffCount);
+                baseketsToLinkMap.set(id, diffCount);
               }
             } else {
-              postsToLinkMap.set(id, count);
+              baseketsToLinkMap.set(id, count);
             }
           });
-          postsToUnLinkMap.forEach(async (count, id) => {
+          baseketsToUnLinkMap.forEach(async (count, id) => {
             const recordKeys = JSON.parse(id);
             const baseketPostRecords = await DataStore.query(BaseketPost, (r) =>
               r.and((r) => {
                 return [
-                  r.postId.eq(recordKeys.id),
-                  r.baseketId.eq(baseketRecord.id),
+                  r.baseketId.eq(recordKeys.id),
+                  r.postId.eq(postRecord.id),
                 ];
               })
             );
@@ -447,8 +401,8 @@ export default function BaseketUpdateForm(props) {
               promises.push(DataStore.delete(baseketPostRecords[i]));
             }
           });
-          postsToLinkMap.forEach((count, id) => {
-            const postToLink = postRecords.find((r) =>
+          baseketsToLinkMap.forEach((count, id) => {
+            const baseketToLink = baseketRecords.find((r) =>
               Object.entries(JSON.parse(id)).every(
                 ([key, value]) => r[key] === value
               )
@@ -457,92 +411,23 @@ export default function BaseketUpdateForm(props) {
               promises.push(
                 DataStore.save(
                   new BaseketPost({
-                    baseket: baseketRecord,
-                    post: postToLink,
-                  })
-                )
-              );
-            }
-          });
-          const humanToLinkMap = new Map();
-          const humanToUnLinkMap = new Map();
-          const humanMap = new Map();
-          const linkedHumanMap = new Map();
-          Human.forEach((r) => {
-            const count = humanMap.get(getIDValue.Human?.(r));
-            const newCount = count ? count + 1 : 1;
-            humanMap.set(getIDValue.Human?.(r), newCount);
-          });
-          linkedHuman.forEach((r) => {
-            const count = linkedHumanMap.get(getIDValue.Human?.(r));
-            const newCount = count ? count + 1 : 1;
-            linkedHumanMap.set(getIDValue.Human?.(r), newCount);
-          });
-          linkedHumanMap.forEach((count, id) => {
-            const newCount = humanMap.get(id);
-            if (newCount) {
-              const diffCount = count - newCount;
-              if (diffCount > 0) {
-                humanToUnLinkMap.set(id, diffCount);
-              }
-            } else {
-              humanToUnLinkMap.set(id, count);
-            }
-          });
-          humanMap.forEach((count, id) => {
-            const originalCount = linkedHumanMap.get(id);
-            if (originalCount) {
-              const diffCount = count - originalCount;
-              if (diffCount > 0) {
-                humanToLinkMap.set(id, diffCount);
-              }
-            } else {
-              humanToLinkMap.set(id, count);
-            }
-          });
-          humanToUnLinkMap.forEach(async (count, id) => {
-            const recordKeys = JSON.parse(id);
-            const baseketHumanRecords = await DataStore.query(
-              BaseketHuman,
-              (r) =>
-                r.and((r) => {
-                  return [
-                    r.humanId.eq(recordKeys.id),
-                    r.baseketId.eq(baseketRecord.id),
-                  ];
-                })
-            );
-            for (let i = 0; i < count; i++) {
-              promises.push(DataStore.delete(baseketHumanRecords[i]));
-            }
-          });
-          humanToLinkMap.forEach((count, id) => {
-            const humanToLink = humanRecords.find((r) =>
-              Object.entries(JSON.parse(id)).every(
-                ([key, value]) => r[key] === value
-              )
-            );
-            for (let i = count; i > 0; i--) {
-              promises.push(
-                DataStore.save(
-                  new BaseketHuman({
-                    baseket: baseketRecord,
-                    human: humanToLink,
+                    post: postRecord,
+                    baseket: baseketToLink,
                   })
                 )
               );
             }
           });
           const modelFieldsToSave = {
-            type: modelFields.type,
+            image: modelFields.image,
             description: modelFields.description,
             tokenAddress: modelFields.tokenAddress,
             tokenId: modelFields.tokenId,
-            rootBaseket: modelFields.rootBaseket,
+            rootToken: modelFields.rootToken,
           };
           promises.push(
             DataStore.save(
-              Baseket.copyOf(baseketRecord, (updated) => {
+              Post.copyOf(postRecord, (updated) => {
                 Object.assign(updated, modelFieldsToSave);
               })
             )
@@ -557,38 +442,37 @@ export default function BaseketUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "BaseketUpdateForm")}
+      {...getOverrideProps(overrides, "PostUpdateForm")}
       {...rest}
     >
       <TextField
-        label="Type"
+        label="Image"
         isRequired={false}
         isReadOnly={false}
-        value={type}
+        value={image}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              type: value,
+              image: value,
               description,
               tokenAddress,
               tokenId,
-              rootBaseket,
-              posts,
-              Human,
+              rootToken,
+              basekets,
             };
             const result = onChange(modelFields);
-            value = result?.type ?? value;
+            value = result?.image ?? value;
           }
-          if (errors.type?.hasError) {
-            runValidationTasks("type", value);
+          if (errors.image?.hasError) {
+            runValidationTasks("image", value);
           }
-          setType(value);
+          setImage(value);
         }}
-        onBlur={() => runValidationTasks("type", type)}
-        errorMessage={errors.type?.errorMessage}
-        hasError={errors.type?.hasError}
-        {...getOverrideProps(overrides, "type")}
+        onBlur={() => runValidationTasks("image", image)}
+        errorMessage={errors.image?.errorMessage}
+        hasError={errors.image?.hasError}
+        {...getOverrideProps(overrides, "image")}
       ></TextField>
       <TextField
         label="Description"
@@ -599,13 +483,12 @@ export default function BaseketUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              type,
+              image,
               description: value,
               tokenAddress,
               tokenId,
-              rootBaseket,
-              posts,
-              Human,
+              rootToken,
+              basekets,
             };
             const result = onChange(modelFields);
             value = result?.description ?? value;
@@ -629,13 +512,12 @@ export default function BaseketUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              type,
+              image,
               description,
               tokenAddress: value,
               tokenId,
-              rootBaseket,
-              posts,
-              Human,
+              rootToken,
+              basekets,
             };
             const result = onChange(modelFields);
             value = result?.tokenAddress ?? value;
@@ -659,13 +541,12 @@ export default function BaseketUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              type,
+              image,
               description,
               tokenAddress,
               tokenId: value,
-              rootBaseket,
-              posts,
-              Human,
+              rootToken,
+              basekets,
             };
             const result = onChange(modelFields);
             value = result?.tokenId ?? value;
@@ -681,187 +562,110 @@ export default function BaseketUpdateForm(props) {
         {...getOverrideProps(overrides, "tokenId")}
       ></TextField>
       <SwitchField
-        label="Root baseket"
+        label="Root token"
         defaultChecked={false}
         isDisabled={false}
-        isChecked={rootBaseket}
+        isChecked={rootToken}
         onChange={(e) => {
           let value = e.target.checked;
           if (onChange) {
             const modelFields = {
-              type,
+              image,
               description,
               tokenAddress,
               tokenId,
-              rootBaseket: value,
-              posts,
-              Human,
+              rootToken: value,
+              basekets,
             };
             const result = onChange(modelFields);
-            value = result?.rootBaseket ?? value;
+            value = result?.rootToken ?? value;
           }
-          if (errors.rootBaseket?.hasError) {
-            runValidationTasks("rootBaseket", value);
+          if (errors.rootToken?.hasError) {
+            runValidationTasks("rootToken", value);
           }
-          setRootBaseket(value);
+          setRootToken(value);
         }}
-        onBlur={() => runValidationTasks("rootBaseket", rootBaseket)}
-        errorMessage={errors.rootBaseket?.errorMessage}
-        hasError={errors.rootBaseket?.hasError}
-        {...getOverrideProps(overrides, "rootBaseket")}
+        onBlur={() => runValidationTasks("rootToken", rootToken)}
+        errorMessage={errors.rootToken?.errorMessage}
+        hasError={errors.rootToken?.hasError}
+        {...getOverrideProps(overrides, "rootToken")}
       ></SwitchField>
       <ArrayField
         onChange={async (items) => {
           let values = items;
           if (onChange) {
             const modelFields = {
-              type,
+              image,
               description,
               tokenAddress,
               tokenId,
-              rootBaseket,
-              posts: values,
-              Human,
+              rootToken,
+              basekets: values,
             };
             const result = onChange(modelFields);
-            values = result?.posts ?? values;
+            values = result?.basekets ?? values;
           }
-          setPosts(values);
-          setCurrentPostsValue(undefined);
-          setCurrentPostsDisplayValue("");
+          setBasekets(values);
+          setCurrentBaseketsValue(undefined);
+          setCurrentBaseketsDisplayValue("");
         }}
-        currentFieldValue={currentPostsValue}
-        label={"Posts"}
-        items={posts}
-        hasError={errors?.posts?.hasError}
-        errorMessage={errors?.posts?.errorMessage}
-        getBadgeText={getDisplayValue.posts}
+        currentFieldValue={currentBaseketsValue}
+        label={"Basekets"}
+        items={basekets}
+        hasError={errors?.basekets?.hasError}
+        errorMessage={errors?.basekets?.errorMessage}
+        getBadgeText={getDisplayValue.basekets}
         setFieldValue={(model) => {
-          setCurrentPostsDisplayValue(
-            model ? getDisplayValue.posts(model) : ""
+          setCurrentBaseketsDisplayValue(
+            model ? getDisplayValue.basekets(model) : ""
           );
-          setCurrentPostsValue(model);
+          setCurrentBaseketsValue(model);
         }}
-        inputFieldRef={postsRef}
+        inputFieldRef={baseketsRef}
         defaultFieldValue={""}
       >
         <Autocomplete
-          label="Posts"
+          label="Basekets"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search Post"
-          value={currentPostsDisplayValue}
-          options={postRecords
-            .filter((r) => !postsIdSet.has(getIDValue.posts?.(r)))
+          placeholder="Search Baseket"
+          value={currentBaseketsDisplayValue}
+          options={baseketRecords
+            .filter((r) => !baseketsIdSet.has(getIDValue.basekets?.(r)))
             .map((r) => ({
-              id: getIDValue.posts?.(r),
-              label: getDisplayValue.posts?.(r),
+              id: getIDValue.basekets?.(r),
+              label: getDisplayValue.basekets?.(r),
             }))}
           onSelect={({ id, label }) => {
-            setCurrentPostsValue(
-              postRecords.find((r) =>
+            setCurrentBaseketsValue(
+              baseketRecords.find((r) =>
                 Object.entries(JSON.parse(id)).every(
                   ([key, value]) => r[key] === value
                 )
               )
             );
-            setCurrentPostsDisplayValue(label);
-            runValidationTasks("posts", label);
+            setCurrentBaseketsDisplayValue(label);
+            runValidationTasks("basekets", label);
           }}
           onClear={() => {
-            setCurrentPostsDisplayValue("");
+            setCurrentBaseketsDisplayValue("");
           }}
           onChange={(e) => {
             let { value } = e.target;
-            if (errors.posts?.hasError) {
-              runValidationTasks("posts", value);
+            if (errors.basekets?.hasError) {
+              runValidationTasks("basekets", value);
             }
-            setCurrentPostsDisplayValue(value);
-            setCurrentPostsValue(undefined);
+            setCurrentBaseketsDisplayValue(value);
+            setCurrentBaseketsValue(undefined);
           }}
-          onBlur={() => runValidationTasks("posts", currentPostsDisplayValue)}
-          errorMessage={errors.posts?.errorMessage}
-          hasError={errors.posts?.hasError}
-          ref={postsRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, "posts")}
-        ></Autocomplete>
-      </ArrayField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
-          if (onChange) {
-            const modelFields = {
-              type,
-              description,
-              tokenAddress,
-              tokenId,
-              rootBaseket,
-              posts,
-              Human: values,
-            };
-            const result = onChange(modelFields);
-            values = result?.Human ?? values;
+          onBlur={() =>
+            runValidationTasks("basekets", currentBaseketsDisplayValue)
           }
-          setHuman(values);
-          setCurrentHumanValue(undefined);
-          setCurrentHumanDisplayValue("");
-        }}
-        currentFieldValue={currentHumanValue}
-        label={"Human"}
-        items={Human}
-        hasError={errors?.Human?.hasError}
-        errorMessage={errors?.Human?.errorMessage}
-        getBadgeText={getDisplayValue.Human}
-        setFieldValue={(model) => {
-          setCurrentHumanDisplayValue(
-            model ? getDisplayValue.Human(model) : ""
-          );
-          setCurrentHumanValue(model);
-        }}
-        inputFieldRef={HumanRef}
-        defaultFieldValue={""}
-      >
-        <Autocomplete
-          label="Human"
-          isRequired={false}
-          isReadOnly={false}
-          placeholder="Search Human"
-          value={currentHumanDisplayValue}
-          options={humanRecords
-            .filter((r) => !HumanIdSet.has(getIDValue.Human?.(r)))
-            .map((r) => ({
-              id: getIDValue.Human?.(r),
-              label: getDisplayValue.Human?.(r),
-            }))}
-          onSelect={({ id, label }) => {
-            setCurrentHumanValue(
-              humanRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentHumanDisplayValue(label);
-            runValidationTasks("Human", label);
-          }}
-          onClear={() => {
-            setCurrentHumanDisplayValue("");
-          }}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.Human?.hasError) {
-              runValidationTasks("Human", value);
-            }
-            setCurrentHumanDisplayValue(value);
-            setCurrentHumanValue(undefined);
-          }}
-          onBlur={() => runValidationTasks("Human", currentHumanDisplayValue)}
-          errorMessage={errors.Human?.errorMessage}
-          hasError={errors.Human?.hasError}
-          ref={HumanRef}
+          errorMessage={errors.basekets?.errorMessage}
+          hasError={errors.basekets?.hasError}
+          ref={baseketsRef}
           labelHidden={true}
-          {...getOverrideProps(overrides, "Human")}
+          {...getOverrideProps(overrides, "basekets")}
         ></Autocomplete>
       </ArrayField>
       <Flex
@@ -875,7 +679,7 @@ export default function BaseketUpdateForm(props) {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || baseketModelProp)}
+          isDisabled={!(idProp || postModelProp)}
           {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
@@ -887,7 +691,7 @@ export default function BaseketUpdateForm(props) {
             type="submit"
             variation="primary"
             isDisabled={
-              !(idProp || baseketModelProp) ||
+              !(idProp || postModelProp) ||
               Object.values(errors).some((e) => e?.hasError)
             }
             {...getOverrideProps(overrides, "SubmitButton")}
