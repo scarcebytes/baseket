@@ -46,6 +46,14 @@ const NavMenu = ({ setStep, activeStep }: NavMenuProps) => {
             Relay Kit
           </Typography>
         </NavItem>
+        <NavItem onClick={() => setStep(4)} active={activeStep === 4}>
+          <OrderLabel fontSize="10px" fontWeight="700">
+            04
+          </OrderLabel>
+          <Typography fontWeight="700" fontSize="20px" marginLeft="12px">
+            Uniswap
+          </Typography>
+        </NavItem>
       </MenuList>
     </NavMenuContainer>
   )
