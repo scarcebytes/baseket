@@ -14,6 +14,15 @@ import usePolling from 'src/hooks/usePolling'
 import Chain from 'src/models/chain'
 import getChain from 'src/utils/getChain'
 
+import { BaseError } from 'viem'
+import { encodeFunctionData } from 'viem'
+import {
+  useAccount,
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from 'wagmi'
+
 type accountAbstractionContextValue = {
   ownerAddress?: string
   chainId: string

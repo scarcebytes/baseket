@@ -13,6 +13,7 @@ import AuthKitDemo from 'src/pages/AuthKitDemo'
 import Intro from 'src/pages/Intro'
 import OnRampKitDemo from 'src/pages/OnRampKitDemo'
 import RelayerKitDemo from 'src/pages/RelayerKitDemo'
+import UniswapDemo from 'src/pages/UniswapDemo'
 import NavMenu from './components/nav-menu/NavMenu'
 import SafeCoreInfo from './components/safe-core-info/SafeCoreInfo'
 import {
@@ -22,6 +23,7 @@ import {
 import aws_exports from "./aws-exports";
 
 import "@aws-amplify/ui-react/styles.css";
+
 
 Amplify.configure(aws_exports);
 
@@ -135,5 +137,9 @@ const steps = [
   {
     // Relay Kit step
     component: RelayerKitDemo
+  },
+  {
+    // Uniswap
+    component: UniswapDemo
   }
 ]
