@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@airstack/airstack-react": "^0.4.9",
     "@aws-amplify/ui-react": "^5.1.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
+    "@mui/lab": "^5.0.0-alpha.140",
     "@mui/material": "^5.11.7",
     "@safe-global/account-abstraction-kit-poc": "^1.0.1",
     "@safe-global/auth-kit": "^1.2.0",
