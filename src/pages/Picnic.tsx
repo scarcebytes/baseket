@@ -113,7 +113,7 @@ const DisplayNFTs = () => {
 };
 
 
-const UniswapDemo = () => {
+const Picnic = () => {
   const {
     safeSelected,
     chain,
@@ -138,16 +138,25 @@ const UniswapDemo = () => {
   return (
     <>
       <Typography variant="h2" component="h1">
-        Uniswap
+        Picnic
       </Typography>
-      <div className="Uniswap">
-        <SwapWidget width="100%" brandedFooter={false} theme={theme} provider={web3Provider} />
-     </div>
+
+
+    <DisplayNFTs />
+
+      <div className="flex items-center justify-center gap-8">
+        <TokenCard amount={12} token={"ABC"} />
+      </div>
+
+      <div style={{ width: '100vw', height: '30vh' }}>
+      <ReactFlow nodes={initialNodes} edges={initialEdges} />
+    </div>
+
     </>
   )
 }
 
-export default UniswapDemo
+export default Picnic
 
 const ConnectedContainer = styled(Box)<{
   theme?: Theme

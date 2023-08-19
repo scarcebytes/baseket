@@ -13,6 +13,8 @@ import AuthKitDemo from 'src/pages/AuthKitDemo'
 import Intro from 'src/pages/Intro'
 import OnRampKitDemo from 'src/pages/OnRampKitDemo'
 import RelayerKitDemo from 'src/pages/RelayerKitDemo'
+import Picnic from 'src/pages/Picnic'
+import Feed from 'src/pages/Feed'
 import UniswapDemo from 'src/pages/UniswapDemo'
 import NavMenu from './components/nav-menu/NavMenu'
 import SafeCoreInfo from './components/safe-core-info/SafeCoreInfo'
@@ -141,5 +143,13 @@ const steps = [
   {
     // Uniswap
     component: UniswapDemo
+  },
+  {
+    // Feed
+    component: Feed
+  },
+  {
+    // Picnic
+    component: Picnic
   }
 ]
