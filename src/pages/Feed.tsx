@@ -29,12 +29,6 @@ import '@uniswap/widgets/fonts.css'
 
 init("c6889b6b670e4cfbba45f1e3cc04476d");
 
-const initialNodes = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-];
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
-
 
 const DisplayNFTs = () => {
   const query = `query GetAllNFTsOwnedByUser {
@@ -113,7 +107,7 @@ const DisplayNFTs = () => {
 };
 
 
-const UniswapDemo = () => {
+const Feed = () => {
   const {
     safeSelected,
     chain,
@@ -123,31 +117,34 @@ const UniswapDemo = () => {
     web3Provider
   } = useAccountAbstraction()
  
-  const theme: UniswapTheme = {
-    primary: '#FFF',
-    secondary: '#A9A9A9',
-    interactive: '#000',
-    container: '#4E4E5A',
-    module: '#222633',
-    accent: '#71FF98',
-    outline: '#CC1',
-    dialog: '#000',
-    fontFamily: 'Josefin Sans',
-  }
 
   return (
     <>
       <Typography variant="h2" component="h1">
-        Uniswap
+        Feed
       </Typography>
-      <div className="Uniswap">
-        <SwapWidget width="100%" brandedFooter={false} theme={theme} provider={web3Provider} />
-     </div>
+
+
+     <Timeline position="alternate">
+      <TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot color="secondary" />
+          <TimelineConnector />
+        </TimelineSeparator>
+        <TimelineContent>Secondary</TimelineContent>
+      </TimelineItem>
+      <TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot color="success" />
+        </TimelineSeparator>
+        <TimelineContent>Success</TimelineContent>
+      </TimelineItem>
+    </Timeline>
     </>
   )
 }
 
-export default UniswapDemo
+export default Feed
 
 const ConnectedContainer = styled(Box)<{
   theme?: Theme

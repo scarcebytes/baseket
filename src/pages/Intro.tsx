@@ -65,17 +65,25 @@ const Intro = ({ setStep }: IntroProps) => {
             Trade in your vault
           </Typography>
         </Box>
+        <Box display="flex" gap={1}>
+          <OrderLabel fontSize="10px" fontWeight="700">
+            05
+          </OrderLabel>
+          <Typography fontWeight="700" fontSize="20px">
+            Feed
+          </Typography>
+        </Box>
+        <Box display="flex" gap={1}>
+          <OrderLabel fontSize="10px" fontWeight="700">
+            06
+          </OrderLabel>
+          <Typography fontWeight="700" fontSize="20px">
+            Picnic
+          </Typography>
+        </Box>
       </Box>
 
       <Divider style={{ alignSelf: 'stretch', margin: '42px 0' }} />
-
-      <Typography variant="h2" fontWeight="700" fontSize="20px">
-        To start using interactive demo select a network:
-      </Typography>
-
-      <Typography>
-        Consider that the Onramp kit will only work on Mumbai test chain and US based connection.
-      </Typography>
 
       <Box display="flex" gap={2} marginTop="32px" alignItems="center">
         <ChainSelector />

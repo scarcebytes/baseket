@@ -54,6 +54,22 @@ const NavMenu = ({ setStep, activeStep }: NavMenuProps) => {
             Trade in your wallet
           </Typography>
         </NavItem>
+        <NavItem onClick={() => setStep(5)} active={activeStep === 5}>
+          <OrderLabel fontSize="10px" fontWeight="700">
+            05
+          </OrderLabel>
+          <Typography fontWeight="700" fontSize="20px" marginLeft="12px">
+            Feed
+          </Typography>
+        </NavItem>
+        <NavItem onClick={() => setStep(6)} active={activeStep === 6}>
+          <OrderLabel fontSize="10px" fontWeight="700">
+            06
+          </OrderLabel>
+          <Typography fontWeight="700" fontSize="20px" marginLeft="12px">
+            Picnic
+          </Typography>
+        </NavItem>
       </MenuList>
     </NavMenuContainer>
   )
