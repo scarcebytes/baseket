@@ -124,22 +124,36 @@ const Feed = () => {
         Feed
       </Typography>
 
-
-     <Timeline position="alternate">
+      <Timeline position="alternate">
       <TimelineItem>
         <TimelineSeparator>
-          <TimelineDot color="secondary" />
+          <TimelineDot />
           <TimelineConnector />
         </TimelineSeparator>
-        <TimelineContent>Secondary</TimelineContent>
+        <TimelineContent>Setup Wallet: January 1 2023</TimelineContent>
       </TimelineItem>
       <TimelineItem>
         <TimelineSeparator>
-          <TimelineDot color="success" />
+          <TimelineDot />
+          <TimelineConnector />
         </TimelineSeparator>
-        <TimelineContent>Success</TimelineContent>
+        <TimelineContent>Started Eli's Inheritance: Feburary 12th 2020</TimelineContent>
+      </TimelineItem>
+      <TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot />
+          <TimelineConnector />
+        </TimelineSeparator>
+        <TimelineContent>Started Eli's Inheritance: Feburary 12th 2023</TimelineContent>
+      </TimelineItem>
+      <TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot />
+        </TimelineSeparator>
+        <TimelineContent>Saved $15 dollars to Eli's Inheritance: April 11th 2023</TimelineContent>
       </TimelineItem>
     </Timeline>
+
     </>
   )
 }
