@@ -36,7 +36,7 @@ const Intro = ({ setStep }: IntroProps) => {
             01
           </OrderLabel>
           <Typography fontWeight="700" fontSize="20px">
-            Auth Kit
+            Setup your wallet
           </Typography>
         </Box>
 
@@ -45,7 +45,7 @@ const Intro = ({ setStep }: IntroProps) => {
             02
           </OrderLabel>
           <Typography fontWeight="700" fontSize="20px">
-            Onramp Kit
+           Fund your wallet
           </Typography>
         </Box>
 
@@ -54,7 +54,15 @@ const Intro = ({ setStep }: IntroProps) => {
             03
           </OrderLabel>
           <Typography fontWeight="700" fontSize="20px">
-            Relay Kit
+            Setup your vault
+          </Typography>
+        </Box>
+        <Box display="flex" gap={1}>
+          <OrderLabel fontSize="10px" fontWeight="700">
+            04
+          </OrderLabel>
+          <Typography fontWeight="700" fontSize="20px">
+            Trade in your vault
           </Typography>
         </Box>
       </Box>
@@ -73,7 +81,7 @@ const Intro = ({ setStep }: IntroProps) => {
         <ChainSelector />
 
         <Button variant="contained" onClick={() => setStep(1)}>
-          Start Demo
+          Start your baseket now
         </Button>
       </Box>
     </Box>

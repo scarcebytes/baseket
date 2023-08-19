@@ -15,6 +15,7 @@ import { useState } from 'react'
 import AddressLabel from 'src/components/address-label/AddressLabel'
 import GelatoTaskStatusLabel from 'src/components/gelato-task-status-label/GelatoTaskStatusLabel'
 import SafeInfo from 'src/components/safe-info/SafeInfo'
+import SafeWallet from 'src/components/safe-wallet/SafeWallet'
 import { useAccountAbstraction } from 'src/store/accountAbstractionContext'
 
 const transferAmount = 0.01
@@ -45,40 +46,7 @@ const RelayerKitDemo = () => {
   return (
     <>
       <Typography variant="h2" component="h1">
-        The Relay Kit
-      </Typography>
-
-      <Typography marginTop="16px">
-        Allow users to pay fees using any ERC-20 tokens, without having to manage gas. Sponsor
-        transactions on behalf of your users. On your first relayed transaction, a Safe Account will
-        be automatically deployed and your address will be assigned as the Safe owner.
-      </Typography>
-
-      <Typography marginTop="24px" marginBottom="8px">
-        Find more info at:
-      </Typography>
-
-      <Stack direction="row" alignItems="center" spacing={2}>
-        <Link
-          href="https://github.com/safe-global/safe-core-sdk/tree/main/packages/relay-kit"
-          target="_blank"
-        >
-          Github
-        </Link>
-
-        <Link
-          href="https://docs.safe.global/learn/safe-core-account-abstraction-sdk/relay-kit"
-          target="_blank"
-        >
-          Documentation
-        </Link>
-      </Stack>
-
-      <Divider sx={{ margin: '32px 0 28px 0' }} />
-
-      {/* Relay Demo */}
-      <Typography variant="h4" component="h2" fontWeight="700" marginBottom="16px">
-        Interactive demo
+        Setup your vault
       </Typography>
 
       {!isAuthenticated ? (
@@ -101,15 +69,16 @@ const RelayerKitDemo = () => {
         <Box display="flex" gap={3}>
           {/* safe Account */}
           <ConnectedContainer>
-            <Typography fontWeight="700">Safe Account</Typography>
+            <Typography fontWeight="700">Vault</Typography>
 
             <Typography fontSize="14px" marginTop="8px" marginBottom="32px">
-              Your Safe account (Smart Contract) holds and protects your assets.
+              Your vault holds and protects your assets.
             </Typography>
 
             {/* Safe Info */}
             {safeSelected && <SafeInfo safeAddress={safeSelected} chainId={chainId} />}
           </ConnectedContainer>
+
 
           {/* Relay Transaction */}
           <ConnectedContainer
@@ -145,7 +114,7 @@ const RelayerKitDemo = () => {
                   variant="contained"
                   onClick={relayTransaction}
                 >
-                  Send Transaction
+                  Create Vault
                 </Button>
 
                 {!hasNativeFunds && chain?.faucetUrl && (
@@ -159,16 +128,10 @@ const RelayerKitDemo = () => {
             {/* Transaction details */}
             <Stack gap={0.5} display="flex" flexDirection="column">
               <Typography>
-                Transfer {transferAmount} {chain?.token}
               </Typography>
 
               {safeSelected && (
                 <Stack gap={0.5} display="flex" flexDirection="row">
-                  <AddressLabel address={safeSelected} showCopyIntoClipboardButton={false} />
-
-                  <ArrowRightAltRoundedIcon />
-
-                  <AddressLabel address={safeSelected} showCopyIntoClipboardButton={false} />
                 </Stack>
               )}
             </Stack>
