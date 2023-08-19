@@ -17,49 +17,18 @@ const AuthKitDemo = () => {
   return (
     <>
       <Typography variant="h2" component="h1">
-        The Auth Kit
+        Setting up your wallet
       </Typography>
 
-      <Typography marginTop="16px">
-        Generate or authenticate a blockchain account using an email address, social media account,
-        or traditional crypto wallets like Metamask.
-      </Typography>
-
-      <Typography marginTop="24px" marginBottom="8px">
-        Find more info at:
-      </Typography>
-
-      <Stack direction="row" alignItems="center" spacing={2}>
-        <Link
-          href="https://github.com/safe-global/safe-core-sdk/tree/main/packages/auth-kit"
-          target="_blank"
-        >
-          Github
-        </Link>
-
-        <Link
-          href="https://docs.safe.global/learn/safe-core-account-abstraction-sdk/auth-kit"
-          target="_blank"
-        >
-          Documentation
-        </Link>
-      </Stack>
-
-      <Divider style={{ margin: '32px 0 28px 0' }} />
-
-      {/* Auth Demo */}
-      <Typography variant="h4" component="h2" fontWeight="700" marginBottom="16px">
-        Interactive demo
-      </Typography>
 
       {isAuthenticated ? (
         <Box display="flex" gap={3}>
           {/* safe Account */}
           <ConnectedContainer>
-            <Typography fontWeight="700">Safe Account</Typography>
+            <Typography fontWeight="700">Vault</Typography>
 
             <Typography fontSize="14px" marginTop="8px" marginBottom="32px">
-              Your Safe account (Smart Contract) holds and protects your assets.
+              Your vault holds and protects your assets.
             </Typography>
 
             {/* Safe Info */}
@@ -68,10 +37,9 @@ const AuthKitDemo = () => {
 
           {/* owner ID */}
           <ConnectedContainer>
-            <Typography fontWeight="700">Owner ID</Typography>
+            <Typography fontWeight="700">Wallet</Typography>
 
             <Typography fontSize="14px" marginTop="8px" marginBottom="32px">
-              Your Owner account signs transactions to unlock your assets.
             </Typography>
 
             {/* Owner details */}

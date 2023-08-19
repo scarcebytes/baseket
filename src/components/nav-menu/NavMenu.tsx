@@ -16,7 +16,7 @@ const NavMenu = ({ setStep, activeStep }: NavMenuProps) => {
       <MenuList>
         <NavItem onClick={() => setStep(0)} active={activeStep === 0}>
           <Typography fontWeight="700" fontSize="20px">
-            Intro
+            Baseket
           </Typography>
         </NavItem>
 
@@ -25,7 +25,7 @@ const NavMenu = ({ setStep, activeStep }: NavMenuProps) => {
             01
           </OrderLabel>
           <Typography fontWeight="700" fontSize="20px" marginLeft="12px">
-            Auth Kit
+            Setup your wallet
           </Typography>
         </NavItem>
 
@@ -34,7 +34,7 @@ const NavMenu = ({ setStep, activeStep }: NavMenuProps) => {
             02
           </OrderLabel>
           <Typography fontWeight="700" fontSize="20px" marginLeft="12px">
-            Onramp Kit
+            Fund your wallet
           </Typography>
         </NavItem>
 
@@ -43,7 +43,7 @@ const NavMenu = ({ setStep, activeStep }: NavMenuProps) => {
             03
           </OrderLabel>
           <Typography fontWeight="700" fontSize="20px" marginLeft="12px">
-            Relay Kit
+            Setup your vault
           </Typography>
         </NavItem>
         <NavItem onClick={() => setStep(4)} active={activeStep === 4}>
@@ -51,7 +51,7 @@ const NavMenu = ({ setStep, activeStep }: NavMenuProps) => {
             04
           </OrderLabel>
           <Typography fontWeight="700" fontSize="20px" marginLeft="12px">
-            Uniswap
+            Trade in your wallet
           </Typography>
         </NavItem>
       </MenuList>

@@ -2,10 +2,10 @@ import AccountAbstraction from '@safe-global/account-abstraction-kit-poc'
 import { Web3AuthModalPack } from '@safe-global/auth-kit'
 import { StripePack } from '@safe-global/onramp-kit'
 import { GelatoRelayPack } from '@safe-global/relay-kit'
-import { MetaTransactionData, MetaTransactionOptions } from '@safe-global/safe-core-sdk-types'
+import { MetaTransactionData, MetaTransactionOptions, SafeVersion} from '@safe-global/safe-core-sdk-types'
 import { ethers, utils } from 'ethers'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
-
+import Safe, { EthersAdapter, SafeFactory, getSafeContract, predictSafeAddress, SafeAccountConfig, SafeDeploymentConfig } from '@safe-global/protocol-kit'
 import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from '@web3auth/base'
 import { Web3AuthOptions } from '@web3auth/modal'
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter'
@@ -146,7 +146,7 @@ const AccountAbstractionProvider = ({ children }: { children: JSX.Element }) => 
       if (web3AuthModalPack) {
         const { safes, eoa } = await web3AuthModalPack.signIn()
         const provider = web3AuthModalPack.getProvider() as ethers.providers.ExternalProvider
-
+  
         // we set react state with the provided values: owner (eoa address), chain, safes owned & web3 provider
         setChainId(chain.id)
         setOwnerAddress(eoa)
