@@ -1,43 +1,8 @@
 import Chain from 'src/models/chain'
 
-export const gnosisChain: Chain = {
-  id: '0x64',
-  token: 'xDai',
-  shortName: 'gno',
-  label: 'Gnosis Chain',
-  rpcUrl: 'https://rpc.gnosischain.com',
-  blockExplorerUrl: 'https://gnosisscan.io',
-  color: '#3e6957',
-  transactionServiceUrl: 'https://safe-transaction-gnosis-chain.safe.global',
-  isStripePaymentsEnabled: false
-}
-
-export const goerliChain: Chain = {
-  id: '0x5',
-  token: 'gETH',
-  label: 'Görli',
-  shortName: 'gor',
-  rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-  blockExplorerUrl: 'https://goerli.etherscan.io',
-  color: '#fbc02d',
-  transactionServiceUrl: 'https://safe-transaction-goerli.safe.global',
-  isStripePaymentsEnabled: false
-}
-
-export const mainnetChain: Chain = {
-  id: '0x1',
-  token: 'ETH',
-  label: 'Ethereum',
-  shortName: 'eth',
-  rpcUrl: 'https://cloudflare-eth.com',
-  blockExplorerUrl: 'https://etherscan.io',
-  color: '#DDDDDD',
-  transactionServiceUrl: 'https://safe-transaction-mainnet.safe.global',
-  isStripePaymentsEnabled: false
-}
-
 export const polygonChain: Chain = {
   id: '0x89',
+  chainNumber: 137,
   token: 'matic',
   shortName: 'matic',
   label: 'Polygon',
@@ -45,32 +10,12 @@ export const polygonChain: Chain = {
   blockExplorerUrl: 'https://polygonscan.com',
   color: '#8248E5',
   transactionServiceUrl: 'https://safe-transaction-polygon.safe.global',
+  usdcAddress: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+  nftAddress: "0x1e936dcb23fbb9246ff469732f6f6ee7a4cbc205",
+  tbaImplementationAddress: "0x2d25602551487c3f3354dd80d76d54383a243358",
+  tbaRegistryAddress: '0x02101dfB77FDE026414827Fdc604ddAF224F0921',
   isStripePaymentsEnabled: false
 }
-
-export const mumbaiChain: Chain = {
-  id: '0x13881',
-  token: 'matic',
-  shortName: 'matic',
-  label: 'Mumbai',
-  rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
-  blockExplorerUrl: 'https://mumbai.polygonscan.com',
-  color: '#8248E5',
-  isStripePaymentsEnabled: true,
-  faucetUrl: 'https://mumbaifaucet.com/'
-}
-
-export const baseChain: Chain = {
-  id: '0x2105',
-  token: 'ETH',
-  shortName: 'Ethereum',
-  label: 'Base',
-  rpcUrl: 'https://base.meowrpc.com',
-  blockExplorerUrl: 'https://basescan.org',
-  color: '#8248E5',
-  isStripePaymentsEnabled: false,
-}
-
 
 const chains: Chain[] = [polygonChain]
 

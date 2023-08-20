@@ -27,6 +27,8 @@ type accountAbstractionContextValue = {
   safeSelected?: string
   safeBalance?: string
   setSafeSelected: React.Dispatch<React.SetStateAction<string>>
+  setGelatoTaskId: React.Dispatch<React.SetStateAction<string | undefined>>
+  setIsRelayerLoading: React.Dispatch<React.SetStateAction<boolean>>
   isRelayerLoading: boolean
   relayTransaction: () => Promise<void>
   gelatoTaskId?: string
@@ -41,6 +43,8 @@ const initialState = {
   relayTransaction: async () => {},
   setChainId: () => {},
   setSafeSelected: () => {},
+  setGelatoTaskId: () => {},
+  setIsRelayerLoading : () => {},
   onRampWithStripe: async () => {},
   safes: [],
   chainId: initialChain.id,
@@ -303,7 +307,8 @@ const AccountAbstractionProvider = ({ children }: { children: JSX.Element }) => 
     safeSelected,
     safeBalance,
     setSafeSelected,
-
+    setGelatoTaskId,
+    setIsRelayerLoading,
     isRelayerLoading,
     relayTransaction,
     gelatoTaskId,
