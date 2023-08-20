@@ -30,7 +30,7 @@ function Header({ setStep }: HeaderProps) {
             style={{ cursor: 'pointer' }}
             onClick={() => setStep(0)} // go to Home
             id="app-logo-header"
-            src={safeHeaderLogo}
+            src="🧺"
             alt="app logo"
           />
 
