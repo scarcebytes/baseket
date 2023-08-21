@@ -26,13 +26,8 @@ function Header({ setStep }: HeaderProps) {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* App Logo */}
-          <img
-            style={{ cursor: 'pointer' }}
-            onClick={() => setStep(0)} // go to Home
-            id="app-logo-header"
-            src="🧺"
-            alt="app logo"
-          />
+  
+          🧺
 
           <Box display="flex" alignItems="center" justifyContent="flex-end" flexGrow={1} gap={1}>
             {/* chain label */}

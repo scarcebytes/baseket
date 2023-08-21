@@ -78,64 +78,6 @@ const RelayerKitDemo = () => {
             {/* Safe Info */}
             {safeSelected && <SafeInfo safeAddress={safeSelected} chainId={chainId} />}
           </ConnectedContainer>
-
-
-          {/* Relay Transaction */}
-          <ConnectedContainer
-            display="flex"
-            flexDirection="column"
-            gap={2}
-            alignItems="flex-start"
-            flexShrink={0}
-          >
-            <Typography fontWeight="700">Relayed transaction</Typography>
-
-            {/* Gelato status label */}
-            {gelatoTaskId && (
-              <GelatoTaskStatusLabel
-                gelatoTaskId={gelatoTaskId}
-                chainId={chainId}
-                setTransactionHash={setTransactionHash}
-                transactionHash={transactionHash}
-              />
-            )}
-
-            {isRelayerLoading && <LinearProgress sx={{ alignSelf: 'stretch' }} />}
-
-            {!isRelayerLoading && !gelatoTaskId && (
-              <>
-                <Typography fontSize="14px">
-                  Check the status of your relayed transaction.
-                </Typography>
-
-                {/* send fake transaction to Gelato relayer */}
-                <Button
-                  startIcon={<SendIcon />}
-                  variant="contained"
-                  onClick={relayTransaction}
-                >
-                  Create Vault
-                </Button>
-
-                {!hasNativeFunds && chain?.faucetUrl && (
-                  <Link href={chain.faucetUrl} target="_blank">
-                    Request 0.5 {chain.token}.
-                  </Link>
-                )}
-              </>
-            )}
-
-            {/* Transaction details */}
-            <Stack gap={0.5} display="flex" flexDirection="column">
-              <Typography>
-              </Typography>
-
-              {safeSelected && (
-                <Stack gap={0.5} display="flex" flexDirection="row">
-                </Stack>
-              )}
-            </Stack>
-          </ConnectedContainer>
         </Box>
       )}
 

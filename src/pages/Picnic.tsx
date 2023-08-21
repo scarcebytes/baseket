@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 // @ts-nocheck
 import styled from '@emotion/styled'
-import { Theme } from '@mui/material'
+import { Button, Card, Theme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useAccountAbstraction } from 'src/store/accountAbstractionContext'
@@ -19,32 +19,18 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import { init, useQuery } from "@airstack/airstack-react";
 import { Asset } from "@airstack/airstack-react";
 import TokenCard from "../components/Token";
+import { CodeBlock, atomOneDark } from 'react-code-blocks'
+import Moralis from "moralis";
+import { EvmChain } from "@moralisweb3/common-evm-utils";
 
 
-import ReactFlow from 'reactflow';
-
-import 'reactflow/dist/style.css';
-
-import '@uniswap/widgets/fonts.css'
 
 init("c6889b6b670e4cfbba45f1e3cc04476d");
 
-const initialNodes = [
-    { id: '1', position: { x: 0, y: 0 }, data: { label: 'Wallet' } },
-    { id: '2', position: { x: 0, y: 100 }, data: { label: 'Vault' } },
-    { id: '3', position: { x: 0, y: 200 }, data: { label: 'Inheritance' } },
-    { id: '4', position: { x: 150, y: 200 }, data: { label: 'Piggy-Bank' } },
-    { id: '5', position: { x: 300, y: 200 }, data: { label: 'Goal' } },
-    { id: '6', position: { x: 100, y: 300 }, data: { label: 'Bitcoin' } },
-    { id: '7', position: { x: 300, y: 300 }, data: { label: 'Dollars' } },
-    { id: '8', position: { x: 500, y: 300 }, data: { label: 'Ethereum' } },
-  ];
-  const initialEdges = [{ id: 'e1-2', source: '1', target: '2' },{ id: 'e2-3', source: '2', target: '3' },{ id: 'e2-4', source: '2', target: '4' },{ id: 'e2-5', source: '2', target: '5' },{ id: 'e3-6', source: '3', target: '6' },{ id: 'e3-7', source: '3', target: '7' },{ id: 'e3-8', source: '3', target: '8' }];
-  
 
 const DisplayNFTs = () => {
   const query = `query GetAllNFTsOwnedByUser {
-    TokenBalances(input: {filter: {owner: {_in: ["5256.eth"]}, tokenType: {_in: [ERC1155, ERC721]}}, blockchain: ethereum, limit: 2}) {
+    TokenBalances(input: {filter: {owner: {_in: ["jacobgoren.eth"]}, tokenType: {_in: [ERC1155, ERC721]}}, blockchain: ethereum, limit: 50}) {
       TokenBalance {
         owner {
           addresses
@@ -58,8 +44,19 @@ const DisplayNFTs = () => {
               original
             }
           }
+          type
+          lastTransferHash
+          erc6551Accounts(
+            input: {blockchain: ethereum, filter: {address: {_in: "jacobgoren.eth"}}}
+          ) {
+            id
+            tokenAddress
+            tokenId
+            creationTransactionHash
+          }
           metaData {
             name
+            description
           }
         }
       }
@@ -67,7 +64,10 @@ const DisplayNFTs = () => {
   }
   `;
 
+  
+
   const [userNFTs, setUserNFTs] = useState();
+
   const { data, loading } = useQuery(query);
 
   useEffect(() => {
@@ -87,27 +87,30 @@ const DisplayNFTs = () => {
               return (
                 <div key={i}>
                   {nft.tokenNfts.contentValue.image !== null && (
-                    <Link href={`/nft/${nft.tokenNfts.address}`}>
-                      <div className="flex flex-col gap-2">
-                        <div className="relative aspect-[5/6] w-full overflow-hidden rounded-md">
-                          <Typography>{nft.tokenNfts.address}</Typography>
-                            <Box
-                            component="img"
-                            sx={{
-                              height: 233,
-                              width: 350,
-                              maxHeight: { xs: 233, md: 167 },
-                              maxWidth: { xs: 350, md: 250 },
-                            }}
-                            alt={nft.tokenNfts.address}
-                            src={nft.tokenNfts.contentValue.image.original}
-                          />
+                    <Card sx={{ maxWidth: 400 }}>
+                      <Link href={`/nft/${nft.tokenNfts.address}`}>
+                        <div className="flex flex-col gap-2">
+                          <div className="relative aspect-[5/6] w-full overflow-hidden rounded-md">
+                            <Typography>{nft.tokenNfts.address}</Typography>
+                              <Box
+                              component="img"
+                              sx={{
+                                height: 380,
+                                width: 380,
+                              }}
+                              alt={nft.tokenNfts.address}
+                              src={nft.tokenNfts.contentValue.image.original}
+                            />
+                          </div>
+                          <span className="font-bold">
+                            {nft.tokenNfts.metaData.name}
+                          </span>
                         </div>
-                        <span className="font-bold">
-                          {nft.tokenNfts.metaData.name}
-                        </span>
-                      </div>
-                    </Link>
+                      </Link>
+                      <Button>Action 1</Button>
+                      <Button>Action 2</Button>
+                      <Button>Action 3</Button>    
+                    </Card>              
                   )}
                 </div>
               );
@@ -119,6 +122,7 @@ const DisplayNFTs = () => {
 };
 
 
+
 const Picnic = () => {
   const {
     safeSelected,
@@ -126,6 +130,7 @@ const Picnic = () => {
     chainId,
     isAuthenticated,
     loginWeb3Auth,
+    ownerAddress,
     web3Provider
   } = useAccountAbstraction()
  
@@ -154,9 +159,16 @@ const Picnic = () => {
         <TokenCard amount={12} token={"ABC"} />
       </div>
 
-      <div style={{ width: '10vw', height: '10vh' }}>
-      <ReactFlow nodes={initialNodes} edges={initialEdges} />
-    </div>
+      {/* TODO: create a component for this? */}
+      <CodeContainer>
+        <CodeBlock
+          text={"text"}
+          language={'javascript'}
+          startingLineNumber={0}
+          theme={atomOneDark}
+        />
+      </CodeContainer>
+
 
     </>
   )
@@ -174,5 +186,16 @@ const ConnectedContainer = styled(Box)<{
   padding: 40px 32px;
 
   min-height: 265px;
+`
+)
+
+
+const CodeContainer = styled(Box)<{
+  theme?: Theme
+}>(
+  ({ theme }) => `
+  border-radius: 10px;
+  border: 1px solid ${theme.palette.border.light};
+  padding: 16px;
 `
 )

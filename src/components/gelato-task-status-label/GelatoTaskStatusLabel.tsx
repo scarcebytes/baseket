@@ -53,7 +53,7 @@ const GelatoTaskStatusLabel = ({
 
   return (
     <Container display="flex" flexDirection="column" gap={2} alignItems="flex-start">
-      <Typography>Gelato Task details</Typography>
+      <Typography>Task details</Typography>
 
       {isLoading && <LinearProgress sx={{ alignSelf: 'stretch' }} />}
 
