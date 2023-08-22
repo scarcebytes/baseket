@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/CloseRounded'
 import { Theme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import ButtonGroup from '@mui/material/ButtonGroup';
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import Link from '@mui/material/Link'
@@ -14,6 +15,7 @@ import LinearProgress from '@mui/material/LinearProgress'
 import { encodeFunctionData } from 'viem'
 import GelatoTaskStatusLabel from 'src/components/gelato-task-status-label/GelatoTaskStatusLabel'
 import { TokenboundClient } from '@tokenbound/sdk'
+import usdcAbi from "../abi/usdc.json";
 
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -24,12 +26,14 @@ import { useState } from 'react'
 import SafeInfo from 'src/components/safe-info/SafeInfo'
 import { useAccountAbstraction } from 'src/store/accountAbstractionContext'
 import { SafeVersion} from '@safe-global/safe-core-sdk-types'
-import { ethers } from 'ethers'
+import { ethers,BigNumberish } from 'ethers'
 import Safe, { EthersAdapter, getSafeContract } from '@safe-global/protocol-kit'
 import SafeApiKit from '@safe-global/api-kit'
 import { MetaTransactionData, SafeTransactionDataPartial, MetaTransactionOptions} from '@safe-global/safe-core-sdk-types'
 import { GelatoRelayPack } from '@safe-global/relay-kit'
 import AccountAbstraction from '@safe-global/account-abstraction-kit-poc'
+import { TBAccountParams } from "@tokenbound/sdk/dist/src/TokenboundClient";
+
 
 const OnRampKitDemo = () => {
   const {
@@ -50,36 +54,27 @@ const OnRampKitDemo = () => {
 
   } = useAccountAbstraction()
 
+
+  const [tokenId, setTokenId] = useState('');
+  const [toAddress, setToAddress] = useState('');
+  const [fromAddress, setFromAddress] = useState('');
+
+  const handleTokenIdSelect = (event: SelectChangeEvent) => {
+    setTokenId(event.target.value as string);
+  };
+
+  const handleToAddressSelect = (event: SelectChangeEvent) => {
+    setToAddress(event.target.value as string);
+  };
+
+  const handleFromAddressSelect = (event: SelectChangeEvent) => {
+    setFromAddress(event.target.value as string);
+  };
+
   const [transactionHash, setTransactionHash] = useState<string>('')
 
 
   const [showStripeWidget, setShowStripeWidget] = useState<boolean>(false)
-
-  const [fromAddress, setFromAddress] = useState('');
-  const [toAddress, setToAddress] = useState('');
-  const [tokenId, setTokenId] = useState('');
-
-  const handleFromAddressChange = (event: SelectChangeEvent) => {
-    console.log("handleFromAddressChange")
-    console.log(event.target.value)
-    setFromAddress(event.target.value as string);
-    console.log(fromAddress)
-  };
-
-  const handleToAddressChange = (event: SelectChangeEvent) => {
-    console.log("handleToAddressChange")
-    console.log(event.target.value)
-    setToAddress(event.target.value as string);
-    console.log(toAddress)
-  };
-
-  const handleTokenIdChange = (event: SelectChangeEvent) => {
-    console.log("handleToAddressChange... event has:")
-    console.log(event.target.value)
-    setTokenId(event.target.value as string);
-    console.log("Token ID is:")
-    console.log(tokenId)
-  };
 
   const sendUSDCFromWallettoSafe = async (to_address: string = "0x986Ae64d979287601DC8A81Ed989f11563775460", token_address: string ="0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",amount: string = "1") => {
  
@@ -87,7 +82,7 @@ const OnRampKitDemo = () => {
       const signer = web3Provider.getSigner()
       const tokenAddress = token_address;
       const tokenAbi = ["function transfer(address _to, uint256 _value) public returns (bool success)"];
-      const usdc = new ethers.Contract(tokenAddress, tokenAbi, signer);
+      const usdc = await tokenContract(tokenAddress, tokenAbi, signer);
       const tx = await usdc.transfer(to_address, ethers.utils.parseUnits(amount, 6));    
       console.log(tx)
 
@@ -96,12 +91,263 @@ const OnRampKitDemo = () => {
     
   }
 
-  const testTBA2 = async () => {
+
+////
+
+const tokenContract = async(contractAddress: string, abi: string[], signer: ethers.providers.JsonRpcSigner,) => {
+  const connectedContract = new ethers.Contract(contractAddress, abi, signer);
+  return connectedContract;
+}
+//token: string, spender: string, value: BigNumberish, deadline: number
+const sendUSDCFromWallettoSafeRelay = async () => {
+
+  if (web3Provider) {
+    const signer = web3Provider.getSigner()
+
+
+    let provider = web3Provider
+    
+    let signerAddress = await signer.getAddress()
+    let tokenAddress = '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174'
+    
+    let abi = [
+      {
+        inputs: [],
+        name: "name",
+        outputs: [
+          {
+            internalType: "string",
+            name: "",
+            type: "string"
+          }
+        ],
+        stateMutability: "view",
+        type: "function"
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "owner",
+            type: "address"
+          }
+        ],
+        name: "nonces",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256"
+          }
+        ],
+        stateMutability: "view",
+        type: "function"
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "owner",
+            type: "address"
+          },
+          {
+            internalType: "address",
+            name: "spender",
+            type: "address"
+          },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256"
+          },
+          {
+            internalType: "uint256",
+            name: "deadline",
+            type: "uint256"
+          },
+          {
+            internalType: "uint8",
+            name: "v",
+            type: "uint8"
+          },
+          {
+            internalType: "bytes32",
+            name: "r",
+            type: "bytes32"
+          },
+          {
+            internalType: "bytes32",
+            name: "s",
+            type: "bytes32"
+          }
+        ],
+        name: "permit",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function"
+      },
+    ]
+    
+    let erc20 = new ethers.Contract(tokenAddress, abi, provider)
+    
+    let nonce = await erc20.nonces(signerAddress)
+    let name = 'USD Coin (PoS)'
+    let amount = ethers.utils.parseUnits("1", 6)
+    let deadline = Date.now() * 1000 + 60 * 60 * 24
+    let spenderAddress = '0x986ae64d979287601dc8a81ed989f11563775460'
+    console.log(name, nonce)
+    
+    let PERMIT_TYPEHASH = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)'))
+    console.log('PERMIT_TYPEHASH', PERMIT_TYPEHASH) // 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9
+    
+    let EIP712_DOMAIN_TYPEHASH = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('EIP712Domain(string name,string version,address verifyingContract,bytes32 salt)'))
+    console.log('EIP712_DOMAIN_TYPEHASH', EIP712_DOMAIN_TYPEHASH) //0x36c25de3e541d5d970f66e4210d728721220fff5c077cc6cd008b3a0c62adab7
+    
+    let DOMAIN_SEPARATOR = ethers.utils.keccak256(
+      ethers.utils.defaultAbiCoder.encode(
+        [
+          'bytes32',
+          'bytes32',
+          'bytes32',
+          'address',
+          'bytes32',
+        ],
+        [
+          EIP712_DOMAIN_TYPEHASH,
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes(name)),
+          ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")),
+          tokenAddress,
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(137).toHexString(), 32)
+        ]
+      )
+    )
+    console.log('DOMAIN_SEPARATOR', DOMAIN_SEPARATOR)
+    
+    let domain = {
+      name: name,
+      version: "1",
+      verifyingContract: tokenAddress,
+      salt: ethers.utils.hexZeroPad(ethers.BigNumber.from(137).toHexString(), 32)
+    }
+    let types = {
+      Permit: [
+        { name: 'owner', type: 'address' },
+        { name: 'spender', type: 'address' },
+        { name: 'value', type: 'uint256' },
+        { name: 'nonce', type: 'uint256' },
+        { name: 'deadline', type: 'uint256' }
+      ]
+    }
+    let value = {
+      owner: signerAddress,
+      spender: spenderAddress,
+      value: amount,
+      nonce: nonce,
+      deadline: deadline
+    }      
+    
+    const signature = await signer._signTypedData(domain, types, value);
+    
+    const { v,r,s } = ethers.utils.splitSignature(signature)
+    var approvalData = erc20.interface.encodeFunctionData('permit', [
+      signerAddress,
+      spenderAddress,
+      amount,
+      deadline,
+      v, r, s
+    ])
+    
+  /*  let tx = await signer.sendTransaction({
+      from: signerAddress,
+      to: tokenAddress,
+      data: approvalData,
+      value: ethers.constants.Zero,
+      gasPrice: ethers.utils.parseUnits('50', 'gwei'),
+      gasLimit: ethers.BigNumber.from(1e6),
+    })*/
+   
+    const tokenAbi1 = ["function transferFrom(address sender,address recipient , uint256 _value) public returns (bool success)"];
+    const usdc = new ethers.Contract(tokenAddress, tokenAbi1);
+    const transferData = await usdc.populateTransaction["transferFrom(address,address,uint256)"]("0x0Ec828E23c31e4b7EbE47be933bfa9a4F2503049","0x986ae64d979287601dc8a81ed989f11563775460",ethers.utils.parseUnits("1", 6))
+  
+
+    const safeTransactionData: MetaTransactionData[] = [{
+      to: tokenAddress,
+      data: approvalData,
+      value: "0",
+  },{
+    to: tokenAddress,
+    data: transferData.data!,
+    value: "0",
+}]
+
+
+
+
+
+  const relayPack = new GelatoRelayPack("saxHHH3f62ShtCr8gyXHPyoHvGNZlf0_mmwFswTIktQ_")
+
+  const safeAccountAbstraction = new AccountAbstraction(signer)
+
+  await safeAccountAbstraction.init({ relayPack })
+
+  const options: MetaTransactionOptions = {
+    isSponsored: true,
+    gasLimit: '600000', // in this alfa version we need to manually set the gas limit
+    gasToken: ethers.constants.AddressZero // native token
+  }
+
+  const gelatoTaskId = await safeAccountAbstraction.relayTransaction(safeTransactionData, options)
+  console.log(gelatoTaskId)
+  setGelatoTaskId(gelatoTaskId)
+    
+
+
+    }
+}
+
+///
+
+
+
+  const testTBA3 = async () => {
  
     if (web3Provider) {
       const signer = web3Provider.getSigner()
 
-     const abiPathToken = require(`../abi/ERC20.json`);
+
+      const tokenboundClient = new TokenboundClient({ signer, chainId: 137 })
+
+      const abiPathToken = require(`../abi/ERC20.json`);
+
+      const tokenAddress = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"; // USDC
+      const txnData = encodeFunctionData({
+        abi: abiPathToken.abi,
+        functionName: 'transferFrom',
+        args: ["0x176cd148d48cD94ebf33Cf5F26892C723e2F5725","0x986ae64d979287601dc8a81ed989f11563775460", ethers.utils.parseUnits("1", 6)]
+      });
+
+      const executedCall = await tokenboundClient.executeCall({
+        account: "0x176cd148d48cD94ebf33Cf5F26892C723e2F5725",
+        to: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+        value: BigInt(0),
+        data: txnData
+      })
+       
+      console.log(executedCall) 
+
+
+     /* const executedCall = await tokenboundClient.executeCall({
+        account: "0x91e93a174d156C54D5e3589cc907CA2C8e1f84b7",
+        to: "0x986ae64d979287601dc8a81ed989f11563775460",
+        value: BigInt(10),
+        data: "",
+      })*/
+
+
+
+
+   /*  const abiPathToken = require(`../abi/ERC20.json`);
 
       const tokenAddress = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"; // USDC
       const txnData = encodeFunctionData({
@@ -126,16 +372,12 @@ const OnRampKitDemo = () => {
        
       const { tokenContract, tokenId, chainId } = nft
        
-      console.log({ tokenContract, tokenId, chainId })
+      console.log({ tokenContract, tokenId, chainId })*/
 
-      const executeCall = await tokenboundClient.executeCall({
-        account: "0x5439e07Bc9832C1033519A982d41C032Fe5763D4",
-        to: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-        value: BigInt(0),
-        data: txnData
-      })
 
-      console.log(executeCall)
+     
+
+
 
 
       /*
@@ -529,12 +771,19 @@ const OnRampKitDemo = () => {
         ethAdapter
       })
       
-      const tokenAbi = ["function safeMint(address to, uint256 tokenId)"];
+      const tokenAbi = ["function safeMint(address to)"];
 
       
       const nft = new ethers.Contract(tokenAddress, tokenAbi);
-      const tx = await nft.populateTransaction["safeMint(address,uint256)"](to_address,tokenID)
+      const tx = await nft.populateTransaction["safeMint(address)"](to_address)
       console.log(tx)
+
+      const registryTokenAbi = ["function createAccount(address implementation, uint256 chainId, address tokenContract, uint256 tokenId, uint256 salt, bytes calldata initData) external returns (address)"];
+      
+      const registry = new ethers.Contract("0x02101dfB77FDE026414827Fdc604ddAF224F0921", registryTokenAbi);
+      const accountCreationtx = await registry.populateTransaction["createAccount(address,uint256,address,uint256,uint256,bytes)"]("0x2d25602551487c3f3354dd80d76d54383a243358",137,tokenAddress,1,0,"0x")
+      console.log(tx)
+
 
       const safeTransactionData: MetaTransactionData[] = [{
         to: tokenAddress,
@@ -635,7 +884,7 @@ const OnRampKitDemo = () => {
   }
 
 
-  const sendUSDCFromWallettoSafeRelay = async () => {
+  const sendUSDCFromWallettoSafeRelayOLD = async () => {
  
     if (web3Provider) {
       const signer = web3Provider.getSigner()
@@ -810,33 +1059,20 @@ const OnRampKitDemo = () => {
           <ConnectedContainer>
             <Typography fontWeight="700">Safe Account</Typography>
 
+
             <Typography fontSize="14px" marginTop="8px" marginBottom="32px">
               Your Safe account (Smart Contract) holds and protects your assets.
-              <Button variant="contained" onClick={async () => {sendUSDCFromSafetoWalletRelay(ownerAddress,chain?.usdcAddress,"1")}}>
-            X Send 1 USDC from Safe to Wallet Relayed
-          </Button>
-              <Button variant="contained" onClick={async () => {sendUSDCFromSafetoWallet("0x5439e07Bc9832C1033519A982d41C032Fe5763D4",chain?.usdcAddress,"1")}}>
-            X Send 1 USDC from Safe to Wallet 
-          </Button>
-          <Button variant="contained" onClick={async () => {sendUSDCFromWallettoSafe(safeSelected,chain?.usdcAddress,"1")}}>
-            X Send 1 USDC from Wallet to Safe 
-          </Button>
-          <Button variant="contained" onClick={async () => {mintWithRelay(safeSelected,chain?.nftAddress,"8")}}>
-            Mint to Safe 
-          </Button>
-          <Button variant="contained" onClick={async () => {transferNFTRelay(chain?.nftAddress,safeSelected,ownerAddress,"8")}}>
-            Transfer NFT from Safe to Wallet
-          </Button>
-          <Button variant="contained" onClick={async () => {burnNFTRelay(chain?.nftAddress,"4")}}>
-            Burn NFT
-          </Button>
-          <Button variant="contained" onClick={async () => {createAccountRelay(chain?.chainNumber, chain?.tbaImplementationAddress, chain?.tbaRegistryAddress,chain?.nftAddress,"8")}}>
-            Create Account
-          </Button>
-          <Button variant="contained" onClick={async () => {testTBA2()}}>
-            TBA
-          </Button>
 
+            
+
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button onClick={async () => {mintWithRelay(safeSelected,chain?.nftAddress)}}>Mint</Button>
+            <Button onClick={async () => {burnNFTRelay(chain?.nftAddress,tokenId)}}>Burn</Button>
+            <Button onClick={async () => {sendUSDCFromSafetoWalletRelay(ownerAddress,chain?.usdcAddress,"1")}}>To Wallet</Button>
+            <Button onClick={async () => {sendUSDCFromWallettoSafeRelay()}}>To Vault</Button>
+            <Button onClick={async () => {transferNFTRelay(chain?.nftAddress,safeSelected,ownerAddress,tokenId)}}>Transfer</Button>
+            <Button onClick={async () => {testTBA3()}}>Token Bound Account</Button>
+        </ButtonGroup>
 
           </Typography>
             {/* Safe Info */}
@@ -852,96 +1088,55 @@ const OnRampKitDemo = () => {
             flexShrink={0}
           >
 
-          <FormControl fullWidth>
-            <Select
-              labelId="fromaddress-simple-select-label"
-              id="fromaddress-simple-select"
-              value={fromAddress}
-              label="From Address"
-              onChange={handleToAddressChange}
-            >
-              <MenuItem value="0x986Ae64d979287601DC8A81Ed989f11563775460">Safe</MenuItem>
-              <MenuItem value="0x0Ec828E23c31e4b7EbE47be933bfa9a4F2503049">Wallet</MenuItem>
-            </Select>
-            </FormControl>
+
+      <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
-            <Select
-              labelId="toaddress-simple-select-label"
-              id="toaddress-simple-select"
-              value={toAddress}
-              label="To Address"
-              //onChange={handleFromAddressChange}
-            >
-              <MenuItem value="0x986Ae64d979287601DC8A81Ed989f11563775460">Safe</MenuItem>
-              <MenuItem value="0x0Ec828E23c31e4b7EbE47be933bfa9a4F2503049">Wallet</MenuItem>
-            </Select>
+              <InputLabel id="tokenID-simple-select-label">Token ID</InputLabel>
+              <Select
+                labelId="tokenID-simple-select-label"
+                id="tokenID-simple-select"
+                value={tokenId}
+                label="Token ID"
+                onChange={handleTokenIdSelect}
+              >
+                <MenuItem value={4}>4</MenuItem>
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={6}>6</MenuItem>
+              </Select>
             </FormControl>
 
             <FormControl fullWidth>
-            <Select
-              labelId="tokenid-simple-select-label"
-              id="tokenid-simple-select"
-              value={tokenId}
-              label="TokenId"
-              //onChange={handleTokenIdChange}
-            >
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
-              <MenuItem value={3}>3</MenuItem>
-            </Select>
-          </FormControl>
+              <InputLabel id="toAddress-simple-select-label">To</InputLabel>
+              <Select
+                labelId="toAddress-simple-select-label"
+                id="toAddress-simple-select"
+                value={toAddress}
+                label="To"
+                onChange={handleToAddressSelect}
+              >
+                <MenuItem value={safeSelected}>Safe</MenuItem>
+                <MenuItem value={ownerAddress}>Vault</MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel id="fromAddress-simple-select-label">From</InputLabel>
+              <Select
+                labelId="fromAddress-simple-select-label"
+                id="fromAddress-simple-select"
+                value={fromAddress}
+                label="From"
+                onChange={handleFromAddressSelect}
+              >
+                <MenuItem value={safeSelected}>Safe</MenuItem>
+                <MenuItem value={ownerAddress}>Vault</MenuItem>
+              </Select>
+            </FormControl>
+
+          </Box>
 
 
           </ConnectedContainer>
-
-
-
-
-
-          {/* Relay Transaction */}
-          <ConnectedContainer
-            display="flex"
-            flexDirection="column"
-            gap={2}
-            alignItems="flex-start"
-            flexShrink={0}
-          >
-            <Typography fontWeight="700">Relayed transaction</Typography>
-
-            {/* Gelato status label */}
-            {gelatoTaskId && (
-              <GelatoTaskStatusLabel
-                gelatoTaskId={gelatoTaskId}
-                chainId={chainId}
-                setTransactionHash={setTransactionHash}
-                transactionHash={transactionHash}
-              />
-            )}
-
-            {isRelayerLoading && <LinearProgress sx={{ alignSelf: 'stretch' }} />}
-
-            {!isRelayerLoading && !gelatoTaskId && (
-              <>
-                <Typography fontSize="14px">
-                  Check the status of your relayed transaction.
-                </Typography>
-
-
-              </>
-            )}
-
-            {/* Transaction details */}
-            <Stack gap={0.5} display="flex" flexDirection="column">
-              <Typography>
-              </Typography>
-
-              {safeSelected && (
-                <Stack gap={0.5} display="flex" flexDirection="row">
-                </Stack>
-              )}
-            </Stack>
-          </ConnectedContainer>
-
 
           {/* Stripe widget */}
           <ConnectedContainer>
@@ -1018,3 +1213,97 @@ const ConnectedContainer = styled(Box)<{
 `
 )
 
+
+/*
+          <Button variant="contained" onClick={async () => {sendUSDCFromSafetoWalletRelay(ownerAddress,chain?.usdcAddress,"1")}}>
+            X Send 1 USDC from Safe to Wallet Relayed
+          </Button>
+              <Button variant="contained" onClick={async () => {sendUSDCFromSafetoWallet("0x5439e07Bc9832C1033519A982d41C032Fe5763D4",chain?.usdcAddress,"1")}}>
+            X Send 1 USDC from Safe to Wallet 
+          </Button>
+          <Button variant="contained" onClick={async () => {sendUSDCFromWallettoSafe(safeSelected,chain?.usdcAddress,"1")}}>
+            X Send 1 USDC from Wallet to Safe 
+          </Button>
+          <Button variant="contained" onClick={async () => {mintWithRelay(safeSelected,chain?.nftAddress)}}>
+            Mint to Safe 
+          </Button>
+          <Button variant="contained" onClick={async () => {transferNFTRelay(chain?.nftAddress,safeSelected,ownerAddress,"8")}}>
+            Transfer NFT from Safe to Wallet
+          </Button>
+          <Button variant="contained" onClick={async () => {burnNFTRelay(chain?.nftAddress,"4")}}>
+            Burn NFT
+          </Button>
+          <Button variant="contained" onClick={async () => {createAccountRelay(chain?.chainNumber, chain?.tbaImplementationAddress, chain?.tbaRegistryAddress,chain?.nftAddress,"8")}}>
+            Create Account
+          </Button>
+          <Button variant="contained" onClick={async () => {sendUSDCFromWallettoSafeRelay()}}>
+           X Send 1 USDC from Wallet to Safe Relayed
+          </Button>*/
+
+
+          /*
+                    <FormControl fullWidth>
+            <Select
+              labelId="fromaddress-simple-select-label"
+              id="fromaddress-simple-select"
+              value={fromAddress}
+              label="From Address"
+              onChange={handleToAddressChange}
+            >
+              <MenuItem value="0x986Ae64d979287601DC8A81Ed989f11563775460">Safe</MenuItem>
+              <MenuItem value="0x0Ec828E23c31e4b7EbE47be933bfa9a4F2503049">Wallet</MenuItem>
+            </Select>
+            </FormControl>
+            <FormControl fullWidth>
+            <Select
+              labelId="toaddress-simple-select-label"
+              id="toaddress-simple-select"
+              value={toAddress}
+              label="To Address"
+              //onChange={handleFromAddressChange}
+            >
+              <MenuItem value="0x986Ae64d979287601DC8A81Ed989f11563775460">Safe</MenuItem>
+              <MenuItem value="0x0Ec828E23c31e4b7EbE47be933bfa9a4F2503049">Wallet</MenuItem>
+            </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+            <Select
+              labelId="tokenid-simple-select-label"
+              id="tokenid-simple-select"
+              value={tokenId}
+              label="TokenId"
+              //onChange={handleTokenIdChange}
+            >
+              <MenuItem value={1}>1</MenuItem>
+              <MenuItem value={2}>2</MenuItem>
+              <MenuItem value={3}>3</MenuItem>
+            </Select>
+          </FormControl>*/
+
+          /*
+            const [fromAddress, setFromAddress] = useState('');
+  const [toAddress, setToAddress] = useState('');
+  const [tokenId, setTokenId] = useState('');
+
+  const handleFromAddressChange = (event: SelectChangeEvent) => {
+    console.log("handleFromAddressChange")
+    console.log(event.target.value)
+    setFromAddress(event.target.value as string);
+    console.log(fromAddress)
+  };
+
+  const handleToAddressChange = (event: SelectChangeEvent) => {
+    console.log("handleToAddressChange")
+    console.log(event.target.value)
+    setToAddress(event.target.value as string);
+    console.log(toAddress)
+  };
+
+  const handleTokenIdChange = (event: SelectChangeEvent) => {
+    console.log("handleToAddressChange... event has:")
+    console.log(event.target.value)
+    setTokenId(event.target.value as string);
+    console.log("Token ID is:")
+    console.log(tokenId)
+  };*/

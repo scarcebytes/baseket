@@ -13,6 +13,8 @@ import { initialChain } from 'src/chains/chains'
 import usePolling from 'src/hooks/usePolling'
 import Chain from 'src/models/chain'
 import getChain from 'src/utils/getChain'
+import { Alchemy, Network, OwnedNftsResponse } from "alchemy-sdk";
+
 
 type accountAbstractionContextValue = {
   ownerAddress?: string
@@ -26,6 +28,11 @@ type accountAbstractionContextValue = {
   setChainId: (chainId: string) => void
   safeSelected?: string
   safeBalance?: string
+  safeUSDCBalance?: string
+  walletBalance?: string
+  walletUSDCBalance?: string
+  walletNFTs?: number
+  safeNFTs?: number
   setSafeSelected: React.Dispatch<React.SetStateAction<string>>
   setGelatoTaskId: React.Dispatch<React.SetStateAction<string | undefined>>
   setIsRelayerLoading: React.Dispatch<React.SetStateAction<boolean>>
@@ -35,6 +42,12 @@ type accountAbstractionContextValue = {
   openStripeWidget: () => Promise<void>
   closeStripeWidget: () => Promise<void>
 }
+
+const config = {
+  apiKey: "OwudSsWQYkiNdDuLERkYh5sACy2ZkOJO",
+  network: Network.MATIC_MAINNET,
+};
+const alchemy = new Alchemy(config);
 
 const initialState = {
   isAuthenticated: false,
@@ -276,9 +289,6 @@ const AccountAbstractionProvider = ({ children }: { children: JSX.Element }) => 
     stripePack?.close()
   }
 
-  // we can pay Gelato tx relayer fees with native token & USDC
-  // TODO: ADD native Safe Balance polling
-  // TODO: ADD USDC Safe Balance polling
 
   // fetch safe address balance with polling
   const fetchSafeBalance = useCallback(async () => {
@@ -288,6 +298,57 @@ const AccountAbstractionProvider = ({ children }: { children: JSX.Element }) => 
   }, [web3Provider, safeSelected])
 
   const safeBalance = usePolling(fetchSafeBalance)
+
+  const fetchSafeUSDCBalance = useCallback(async () => {
+
+    let usdcContract = chain.usdcAddress;
+    
+    //Call the method to return the token balances for this address
+    let response = await alchemy.core.getTokenBalances(safeSelected, [usdcContract])
+
+    return response.tokenBalances[0].tokenBalance!
+  }, [web3Provider, safeSelected])
+
+  const safeUSDCBalance = usePolling(fetchSafeUSDCBalance)
+
+  const fetchWalletUSDCBalance = useCallback(async () => {
+
+    let usdcContract = chain.usdcAddress;
+    
+    //Call the method to return the token balances for this address
+    let response = await alchemy.core.getTokenBalances(ownerAddress, [usdcContract])
+
+    return response.tokenBalances[0].tokenBalance!
+  }, [web3Provider, safeSelected])
+
+  const walletUSDCBalance = usePolling(fetchWalletUSDCBalance)
+
+
+  const fetchWalletBalance = useCallback(async () => {
+
+    const balance = await web3Provider?.getBalance(ownerAddress)
+
+    return balance?.toString()
+  }, [web3Provider, safeSelected])
+
+  const walletBalance = usePolling(fetchWalletBalance)
+
+  const fetchWalletNFTs = useCallback(async () => {
+
+    const nfts = await alchemy.nft.getNftsForOwner(ownerAddress)
+
+    return nfts.totalCount
+  }, [web3Provider, safeSelected])
+
+  const walletNFTs = usePolling(fetchWalletNFTs)
+
+  const fetchSafeNFTs = useCallback(async () => {
+
+    const nfts = await alchemy.nft.getNftsForOwner(safeSelected)
+    return nfts.totalCount
+  }, [web3Provider, safeSelected])
+
+  const safeNFTs = usePolling(fetchSafeNFTs)
 
   const state = {
     ownerAddress,
@@ -306,6 +367,11 @@ const AccountAbstractionProvider = ({ children }: { children: JSX.Element }) => 
 
     safeSelected,
     safeBalance,
+    safeUSDCBalance,
+    walletBalance,
+    walletUSDCBalance,
+    walletNFTs,
+    safeNFTs,
     setSafeSelected,
     setGelatoTaskId,
     setIsRelayerLoading,
