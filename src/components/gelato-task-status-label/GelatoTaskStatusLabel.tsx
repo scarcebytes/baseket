@@ -13,6 +13,9 @@ import { TransactionStatusResponse } from '@gelatonetwork/relay-sdk'
 import AddressLabel from 'src/components/address-label/AddressLabel'
 import useApi from 'src/hooks/useApi'
 import getChain from 'src/utils/getChain'
+import { Alchemy, Network, TransactionReceipt } from "alchemy-sdk";
+import { useState } from 'react'
+
 
 type GelatoTaskStatusLabelProps = {
   gelatoTaskId: string
@@ -21,7 +24,13 @@ type GelatoTaskStatusLabelProps = {
   setTransactionHash: React.Dispatch<React.SetStateAction<string>>
 }
 
-const pollingTime = 4_000 // 4 seconds of polling time to update the Gelato task status
+const config = {
+  apiKey: "OwudSsWQYkiNdDuLERkYh5sACy2ZkOJO",
+  network: Network.MATIC_MAINNET,
+};
+const alchemy = new Alchemy(config);
+
+const pollingTime = 1_000 // 4 seconds of polling time to update the Gelato task status
 
 // TODO: rename this to TrackGelatoTaskStatus
 const GelatoTaskStatusLabel = ({
@@ -45,9 +54,23 @@ const GelatoTaskStatusLabel = ({
   const isSuccess = gelatoTaskInfo?.taskState === 'ExecSuccess'
   const isLoading = !isCancelled && !isSuccess
 
+  const getTransactionReceipt = async (tx: string) => {
+    let response = await alchemy.core.getTransactionReceipt(tx)
+    if(response){
+      setTransactionReceipt(response)
+    }
+  }
+
+  const [transactionReceipt, setTransactionReceipt] = useState<TransactionReceipt>()
+
+
   useEffect(() => {
     if (gelatoTaskInfo?.transactionHash) {
       setTransactionHash(gelatoTaskInfo.transactionHash)
+      //Call the method to fetch the transaction receipt of the tx
+      getTransactionReceipt(gelatoTaskInfo.transactionHash)
+
+
     }
   }, [gelatoTaskInfo, setTransactionHash])
 

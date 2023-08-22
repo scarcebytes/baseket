@@ -9,6 +9,9 @@ import Stack from '@mui/material/Stack'
 import GelatoTaskStatusLabel from 'src/components/gelato-task-status-label/GelatoTaskStatusLabel'
 import { useAccountAbstraction } from 'src/store/accountAbstractionContext'
 import { useState } from 'react'
+import Button from '@mui/material/Button'
+import SafeInfo from 'src/components/safe-info/SafeInfo'
+import ConnectedWalletLabel from 'src/components/connected-wallet-label/ConnectedWalletLabel'
 
 type NavMenuProps = {
   setStep: (newStep: number) => void
@@ -97,7 +100,23 @@ const NavMenu = ({ setStep, activeStep }: NavMenuProps) => {
         </NavItem>
       </MenuList>
 
-          {/* Relay Transaction */}
+      {!isAuthenticated ? (
+        <ConnectedContainer
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          gap={3}
+        >
+          <Typography variant="h4" component="h3" fontWeight="700">
+            To use the Transaction Hub you need to be authenticated
+          </Typography>
+
+          <Button variant="contained" onClick={loginWeb3Auth}>
+            Connect
+          </Button>
+        </ConnectedContainer>
+      ) : (
           <ConnectedContainer
             display="flex"
             flexDirection="column"
@@ -122,7 +141,7 @@ const NavMenu = ({ setStep, activeStep }: NavMenuProps) => {
             {!isRelayerLoading && !gelatoTaskId && (
               <>
                 <Typography fontSize="14px">
-                  Check the status of your relayed transaction.
+                  Check the status of your transaction.
                 </Typography>
 
 
@@ -140,6 +159,39 @@ const NavMenu = ({ setStep, activeStep }: NavMenuProps) => {
               )}
             </Stack>
           </ConnectedContainer>
+      )}
+
+          {!isAuthenticated ? (
+        <ConnectedContainer
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          gap={3}
+        >
+          <Typography variant="h4" component="h3" fontWeight="700">
+            To use the Relay Kit you need to be authenticated
+          </Typography>
+
+          <Button variant="contained" onClick={loginWeb3Auth}>
+            Connect
+          </Button>
+        </ConnectedContainer>
+      ) : (
+        <Box display="flex" gap={3}>
+          {/* safe Account */}
+          <ConnectedContainer>
+            <Typography fontWeight="700" marginTop="8px" marginBottom="22px">Vault</Typography>
+            {/* Safe Info */}
+            {safeSelected && <SafeInfo safeAddress={safeSelected} chainId={chainId} />}
+            <Typography fontWeight="700" marginTop="8px" marginBottom="22px">Wallet</Typography>
+            <ConnectedWalletLabel />
+          </ConnectedContainer>
+
+        </Box>
+      )}
+          
+
 
     </NavMenuContainer>
   )

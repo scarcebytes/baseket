@@ -315,34 +315,37 @@ const sendUSDCFromWallettoSafeRelay = async () => {
     if (web3Provider) {
       const signer = web3Provider.getSigner()
 
-      /*
-    // Receiver Address which receives Ether
-    let receiverAddress = '0x91e93a174d156C54D5e3589cc907CA2C8e1f84b7'
-    // Ether amount to send
-    let amountInEther = '1.00'
-    // Create a transaction object
-    let tx = {
-        to: receiverAddress,
-        // Convert currency unit from ether to wei
-        value: ethers.utils.parseEther(amountInEther)
-    }
-    // Send a transaction
-    signer.sendTransaction(tx)
-    .then((txObj) => {
-        console.log('txHash', txObj.hash)
-      */
 
       const tokenboundClient = new TokenboundClient({ signer, chainId: 137 })
 
+      const abiPathToken = require(`../abi/ERC20.json`);
+
+      const tokenAddress = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"; // USDC
+      const txnData = encodeFunctionData({
+        abi: abiPathToken.abi,
+        functionName: 'transferFrom',
+        args: ["0x176cd148d48cD94ebf33Cf5F26892C723e2F5725","0x986ae64d979287601dc8a81ed989f11563775460", ethers.utils.parseUnits("1", 6)]
+      });
+
       const executedCall = await tokenboundClient.executeCall({
+        account: "0x176cd148d48cD94ebf33Cf5F26892C723e2F5725",
+        to: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+        value: BigInt(0),
+        data: txnData
+      })
+       
+      console.log(executedCall) 
+
+
+     /* const executedCall = await tokenboundClient.executeCall({
         account: "0x91e93a174d156C54D5e3589cc907CA2C8e1f84b7",
         to: "0x986ae64d979287601dc8a81ed989f11563775460",
         value: BigInt(10),
         data: "",
-      })
+      })*/
 
 
-      console.log(executedCall)
+
 
    /*  const abiPathToken = require(`../abi/ERC20.json`);
 
@@ -1064,10 +1067,11 @@ const sendUSDCFromWallettoSafeRelay = async () => {
 
           <ButtonGroup variant="contained" aria-label="outlined primary button group">
             <Button onClick={async () => {mintWithRelay(safeSelected,chain?.nftAddress)}}>Mint</Button>
-            <Button onClick={async () => {burnNFTRelay(chain?.nftAddress,"4")}}>Burn</Button>
+            <Button onClick={async () => {burnNFTRelay(chain?.nftAddress,tokenId)}}>Burn</Button>
             <Button onClick={async () => {sendUSDCFromSafetoWalletRelay(ownerAddress,chain?.usdcAddress,"1")}}>To Wallet</Button>
             <Button onClick={async () => {sendUSDCFromWallettoSafeRelay()}}>To Vault</Button>
-            <Button onClick={async () => {transferNFTRelay(chain?.nftAddress,safeSelected,ownerAddress,"8")}}>Transfer</Button>
+            <Button onClick={async () => {transferNFTRelay(chain?.nftAddress,safeSelected,ownerAddress,tokenId)}}>Transfer</Button>
+            <Button onClick={async () => {testTBA3()}}>Token Bound Account</Button>
         </ButtonGroup>
 
           </Typography>
@@ -1095,9 +1099,9 @@ const sendUSDCFromWallettoSafeRelay = async () => {
                 label="Token ID"
                 onChange={handleTokenIdSelect}
               >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                <MenuItem value={4}>4</MenuItem>
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={6}>6</MenuItem>
               </Select>
             </FormControl>
 

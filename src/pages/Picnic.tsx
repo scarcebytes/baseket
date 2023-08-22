@@ -28,9 +28,11 @@ import { EvmChain } from "@moralisweb3/common-evm-utils";
 init("c6889b6b670e4cfbba45f1e3cc04476d");
 
 
-const DisplayNFTs = () => {
+const DisplayNFTs = (address: string) => {
   const query = `query GetAllNFTsOwnedByUser {
-    TokenBalances(input: {filter: {owner: {_in: ["jacobgoren.eth"]}, tokenType: {_in: [ERC1155, ERC721]}}, blockchain: ethereum, limit: 50}) {
+    TokenBalances(
+      input: {filter: {owner: {_in: ["0x986Ae64d979287601DC8A81Ed989f11563775460"]}, tokenType: {_in: [ERC1155, ERC721]}}, blockchain: polygon, limit: 50}
+    ) {
       TokenBalance {
         owner {
           addresses
@@ -47,7 +49,7 @@ const DisplayNFTs = () => {
           type
           lastTransferHash
           erc6551Accounts(
-            input: {blockchain: ethereum, filter: {address: {_in: "jacobgoren.eth"}}}
+            input: {blockchain: ethereum, filter: {address: {_in: "0x986Ae64d979287601DC8A81Ed989f11563775460"}}}
           ) {
             id
             tokenAddress
@@ -145,6 +147,7 @@ const Picnic = () => {
     dialog: '#000',
     fontFamily: 'Josefin Sans',
   }
+//    <DisplayNFTs address={ownerAddress} />
 
   return (
     <>
@@ -153,7 +156,6 @@ const Picnic = () => {
       </Typography>
 
 
-    <DisplayNFTs />
 
       <div className="flex items-center justify-center gap-8">
         <TokenCard amount={12} token={"ABC"} />

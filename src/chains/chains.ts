@@ -11,7 +11,7 @@ export const polygonChain: Chain = {
   color: '#8248E5',
   transactionServiceUrl: 'https://safe-transaction-polygon.safe.global',
   usdcAddress: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-  nftAddress: "0x19635f110ef316B291D9df446A6708D38513b2fE",
+  nftAddress: "0x8EB8AC65abAc7515eF3769b4DD08FD2C15eA5ed8",
   tbaImplementationAddress: "0x2d25602551487c3f3354dd80d76d54383a243358",
   tbaRegistryAddress: '0x02101dfB77FDE026414827Fdc604ddAF224F0921',
   isStripePaymentsEnabled: false

@@ -25,7 +25,7 @@ type SafeInfoProps = {
 // TODO: ADD CHAIN LABEL
 
 function SafeInfo({ safeAddress, chainId }: SafeInfoProps) {
-  const { web3Provider, chain, safeBalance } = useAccountAbstraction()
+  const { web3Provider, chain, safeBalance, safeUSDCBalance, safeNFTs } = useAccountAbstraction()
 
   const [isDeployed, setIsDeployed] = useState<boolean>(false)
   const [isDeployLoading, setIsDeployLoading] = useState<boolean>(true)
@@ -103,6 +103,18 @@ function SafeInfo({ safeAddress, chainId }: SafeInfoProps) {
               <AmountLabel
                 amount={utils.formatEther(safeBalance || '0')}
                 tokenSymbol={chain?.token || ''}
+              />
+            </Typography>
+            <Typography fontWeight="700">
+            <AmountLabel
+                amount={utils.formatUnits(safeUSDCBalance || '0',6)}
+                tokenSymbol={'USDC'}
+              />
+            </Typography>
+            <Typography fontWeight="700">
+            <AmountLabel
+                amount={utils.formatUnits(safeNFTs || '0',0)}
+                tokenSymbol={'NFTs'}
               />
             </Typography>
           </AmountContainer>
